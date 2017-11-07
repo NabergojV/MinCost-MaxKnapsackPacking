@@ -1,1 +1,1 @@
-# Minimum Cost Maximum Knapsack Packing
+# Minimum Cost Maximal Knapsack Packing Problem
