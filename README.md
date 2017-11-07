@@ -1,1 +1,1 @@
-# Projekt_OR
+# MinCost-MaxKnapsackPacking
