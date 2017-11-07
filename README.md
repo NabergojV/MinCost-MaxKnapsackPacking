@@ -1,1 +1,1 @@
-# MinCost-MaxKnapsackPacking
+# Minimum Cost Maximum Knapsack Packing
