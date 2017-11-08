@@ -12,7 +12,7 @@ Predstavila bova problem nahrbtnika z danim naborom predmetov, ki imajo predpisa
 S tem delom bova poskusila ponuditi poglobljeno študijo točnih metod reševanja MCMKP in MPMKC do dokazljive optimalnosti.
 Najprej, bova podala učinkovit dinamični algoritem za reševanje MCMKP, katerega časovna zahtevnost je $O(nC)$ in prostorska zahtevnost $O(n+C)$. Nato bova predstavila nove teoretične rezultate o stabilnosti dveh najboljših MPI (»mixed-iteger programming« ) modelov iz literature. Kasneje bova v obsežni računski študiji na raznolikih primerih pokazala hitrost dinamičnega algoritma v primerjavi z vrhunskim komercialnim mešano celoštevilskim programskim (MIP) reševanjem.
 
-Na koncu bova dokazala še ekvivalenco med MCMKP in MPMKC in da lahko neko optimalno rešitev MCMKP dobimo z ustrezno linearno transformacijo. Ta nakazuje, da je MPMKC prav tako šibko NP-zahteven ter da obstaja postopek dinamičnega programiranja, ki teče v $O(n(W-C))$ času in zahteva $O(n+(W-C))$ prostora, kjer je W skupna teža vseh predmetov. 
+Na koncu bova pokazala še ekvivalenco med MCMKP in MPMKC in da lahko neko optimalno rešitev MCMKP dobimo z ustrezno linearno transformacijo. Ta nakazuje, da je MPMKC prav tako šibko NP-zahteven ter da obstaja postopek dinamičnega programiranja, ki teče v $O(n(W-C))$ času in zahteva $O(n+(W-C))$ prostora, kjer je W skupna teža vseh predmetov. 
 
 ## Klasični problem nahrbtnika
 
