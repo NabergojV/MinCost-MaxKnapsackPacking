@@ -1,7 +1,8 @@
 # Minimum Cost Maximal Knapsack Packing Problem
-# EFEKTIVEN ALGORITEM DINAMIČNEGA PROGRAMIRANJA PRI PROBLEMU NAHRBTNIKA Z MINIMALNI STROŠKI IN MAKSIMALNO ZAPOLNITVIJO
+# Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo
 
 Veronika Nabergoj
+
 Luka Vidic
  
 ## Uvod
