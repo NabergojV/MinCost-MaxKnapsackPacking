@@ -1,0 +1,125 @@
+---
+title: "Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
+author: "Luka Vidic, Veronika Nabergoj"
+date: "09 november 2017"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+## Uvod
+
+Predstavila bova problem nahrbtnika z danim naborom predmetov, ki imajo predpisano vrednost in težo. Skušala bova poiskati maksimalno napolnitev nahrbtnika z najmanjšo skupno vrednostjo vsebovanih predmetov. Napisala bova efektiven dinamičen algoritem, ki ima psevdo-polinomsko časovno zahtevnost. Pokazala bova tudi ekvivalenco najinega problema in klasičnega problema polnjenja nahrbtnika.
+
+***
+
+## Kratek opis problema
+
+S tem delom bova poskusila predstaviti poglobljeno študijo točnih metod reševanja MCMKP in MPMKC do dokazljive optimalnosti. Najprej, bova podala učinkovit dinamični algoritem za reševanje MCMKP, katerega časovna zahtevnost je $O(nC)$ in prostorska zahtevnost $O(n+C)$. Nato bova predstavila nove teoretične rezultate o stabilnosti dveh najboljših MPI (»mixed-integer programming« ) modelov iz literature. Kasneje bova v obsežni računski študiji na raznolikih primerih pokazala hitrost dinamičnega algoritma v primerjavi z vrhunskim komercialnim mešano celoštevilskim programskim (MIP) reševanjem.
+
+Na koncu bova pokazala še ekvivalenco med MCMKP in MPMKC in da lahko neko optimalno rešitev MCMKP dobimo z ustrezno linearno transformacijo. Ta nakazuje, da je MPMKC prav tako šibko NP-zahteven ter, da obstaja postopek dinamičnega programiranja, ki teče v $O(n(W-C))$ času in zahteva $O(n+(W-C))$ prostora, kjer je W skupna teža vseh predmetov.
+
+### Klasični problem nahrbtnika
+
+Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto $C>0$ in naborom predmetov $I={1,…,n}$, z vrednostjo $p_i≥0$ in težo $w_i≥0$. Iščemo maksimalen profit, pri katerem je teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešano celoštevilskega linearnega programiranja: 
+
+$$\max{\bigg\{\sum_{i \in I}p_i x_i : \sum_{i \in I} w_i x_i \le C, x_i \in \{0,1\}, i \in I \bigg\}},$$
+
+
+kjer vsaka spremenljivka $x_i$ zavzame vrednost 1, če je i-ti predmet v nahrbtniku. Vsi parametri so cela števila. Optimizacijski problem, ki je podoben temu problemu je tudi najin problem nahrbtnika.
+
+#### Definicija 1: *Minimalni stroški, maksimalno število predmetov v nahrbtniku - MCMKP*
+
+Z začetnimi podatki $(I,p,w,C)$, je cilj najti maksimalno napolnitev nahrbtnika $S^* \subset I$, ki minimizira vrednosti izbranih stvari. 
+$$ S^* = \arg \max_{S \subset I} \bigg\{ \sum_{i \in S} p_i \bigg| \sum_{i \in S}w_i \ge C \text{ and } \sum_{i \in S \backslash {j}}w_i < C, \forall j \in S \bigg\} $$ 
+Pri problemu MCMKP privzamemo da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^*$ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter tako dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
+
+***
+
+## Lastnosti rešitve MCMKP-ja (solution properties)
+
+V tem poglavju so opisane lastnosti, ki so privzete v dinamičnem algoritmu. 
+Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.$ Za vsak $i\in I$ definiramo $C_i:=C-w_i$, tako dobimo $C_1\geq C_2 \geq \dots \geq C_3.$ $w_n$ označimo tudi z $w_{max}:=\max_{i\in I}w_i (=w_n).$ Definiramo še $W:=\sum_{i\in I}w_i$ ter $P:=\sum_{i\in I}p_i.$ Za vsako podmnožico $S \subset I$ je $w(s)=\sum_{i\in S}w_i$ in $W_i=\sum_{j<i}w_j.$
+
+#### Lastnost 1: *(Furini et al. (2015))*
+
+V nekem naključnem, dosegljivem MCMKP z rešitvijo $S\subset I$, je kapaciteta navzdol omejena tako:
+$$w(S)\geq C-w_{max}+1.$$
+
+Definiramo še *kritičen predmet*, to je predmet, katerega teža da natančno zgornjo mejo prvemu predmetu, ki ga izpustimo iz katerekoli dosegljive rešitve.
+
+#### Definicija 2: *MCMKP-jeva kritična teža in MCMKP-jev kritičen predmet*
+
+Naj sedaj z 
+$$i_c:=arg \min \bigg\{ i\in I \bigg| \sum_{j\leq i}w_j>C \bigg\},$$
+označimo indeks kritičnega predmeta. To je indeks prvega predmeta, ki preseže kapaciteto. Privzeto je, da bodo vsi predmeti z indeksi $i\leq i_c$ prav tako vsebovani. Kritična teža, označena z $w_c$ je teža kritičnega predmeta:
+$w_c:=w_{i_c}$
+
+#### Trditev 1: *(Furini et al. (2015))*
+
+Teža prvega izpuščenega predmeta katerekoli dosegljive MCMKP rešitve $S$ je navzgor omejena s kritično težo $w_c$ oziroma:
+$$S \text{ je dosegljiva } \Rightarrow \min_{i \notin S}w_i \le w_c$$
+Posledično lahko rečemo, da je kapaciteta nahrbtnika omejena navzdol z
+$$ w(S)\geq C-w_c+1.$$
+
+#### Dokaz:
+
+To lahko vidimo zelo preprosto: Predvidevamo, da obstaja taka dosegljiva zapolnjenost nahrbtnika $S\subset I$, da je teža najmanjšega predmeta, ki smo ga izpustili iz $S$, $>w_c$. v tem primeru, S mora vsebovati vse predmete $i$, za katere velja $w_i\leq w_c$. Po definiciji $w_c$, je kapaciteta nahrbtnika, ki vsebuje seznam predmetov $S$, strogo večja od $C$, kar je protislovje.
+
+#### Trditev 2:
+
+Naj bo $S\subset I$ dosegljiva MCMKP rešitev. Če je predmet $i\in I \text{ i-ti}$ prvi, katerega izpustimo iz $S$, imamo $S=\{1,\dots,i-1\} \cup S^{'}$, kjer je $S^{'}\subseteq\{i+1,\dots,n\}$, teža množice $S^{'}$ je prav tako spodaj omejena z:
+$$w(S^{'})\geq C-\sum_{j<i}w_j-w_i+1.$$
+
+#### Dokaz:
+
+Predpostavimo, da velja $w(S^{'})\le C-\sum_{j<i}w_j-w_i+1$. Če to drži, potem bi lahko $i$-ti predmet dodali v $S$ ne da bi prekoračili kapaciteto nahrbtnika (ker je $w(S^{'}) \ge 0$ in vsota na desni vsebuje $w_i$), po drugi strani pa trdimo, da je S maksimalno pakiranje nahrbtnika, kar je seveda protislovje.
+
+#### Lastnost 2:
+
+Kljub temu da imamo problem minimizacije, ni odveč definirati zgornjo mejo kapacitete nahrbtnika.
+
+Spodnja trditev dobro opiše primer zakaj se poslužujemo zgornje meje
+
+#### Trditev 3: 
+
+Če imamo $w_i = p_i$ za $\forall i \in I$, potem kapaciteta katerekoli optimalne rešitve $S$ ne presega $C$, tudi v primeru, ko tega pogoja ne določimo eksplicitno.
+
+#### Dokaz:
+
+Označimo z MSMKP relaksiran problem brez omejitve kapacitete nahrbtnika. Naj velja $w_i = p_i$, za $\forall i \in I$ in naj bo $S$ optimalna rešitev (minimalne moči) relaksiranega problema, tako da, $w(S) > C$. Naj bo $k$ indeks najlažjega predmeta iz $S$, to je, $k = \arg \min_{i\in S}w_i$. Sedaj sestavimo novo rešitev $S^{'}$ kot $S^{'}=S\backslash \{k\}$. Tako imamo $w(S^{'}) + w_i \le C$ za nek predmet $i \in I \backslash S^{'}$, kajti v nasprotnem primeru bi bila $S^{'}$ maksimalna zapolnitev nahrbtnika z višjo končno vrednostjo kot $S$, kar pa je protislovje.
+
+***
+
+## Dinamičen algoritem za reševanje MCMKP
+Z vsemi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem, ki za izvajanje porabi $O(nC)$ časa in $O(n+C)$ prostora.
+Ta algoritem je postavljen na dejstvu, da ko izvemo katera je najmanjša stvar, ki smo jo izpustili iz rešitve, se MCMKP reducira na problem, ki ima spodnjo in zgornjo mejo kapacitete. To lastnost lahko izrazimo takole:
+
+###(Proposition) "Lastnost" Trditev: 
+Optimalna MCMKP rešitev se lahko izračuna na sledeč način:
+
+$$ OPT=min_{i \in I:i\leq i_c} \bigg\{KP(i,C_L,C_U) + \sum_{j<i}p_j \bigg\},$$
+
+kjer je $C_L=C-W_i-w_i+1$ in $C_U=C-W_i$ in
+
+$$ KP(i,C_L,C_U)=min\bigg\{ \sum_{j>i} p_jy_j : C_L \leq \sum_{j>i}w_jy_j \leq C_U, y\text{ je binaren}\bigg\}.$$
+
+##OPIS PROGRAMIRANJA
+
+###Eksperimenti
+
+
+Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je med seboj korelirana, druga skupina pa nekorelirana. Podatki so generirani v R studiu s sledečo kodo:
+```{r koda}
+```
+
+
+
+
+
+
+
+
+
+
