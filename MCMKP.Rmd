@@ -40,7 +40,9 @@ Pri problemu MCMKP privzamemo da je problem $(I,p,w,C)$ netrivialen in je pripad
 ## Lastnosti rešitve MCMKP-ja (solution properties)
 
 V tem poglavju so opisane lastnosti, ki so privzete v dinamičnem algoritmu. 
-Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.$ Za vsak $i\in I$ definiramo $C_i:=C-w_i$, tako dobimo $C_1\geq C_2 \geq \dots \geq C_3.$ $w_n$ označimo tudi z $w_{max}:=\max_{i\in I}w_i (=w_n).$ Definiramo še $W:=\sum_{i\in I}w_i$ ter $P:=\sum_{i\in I}p_i.$ Za vsako podmnožico $S \subset I$ je $w(s)=\sum_{i\in S}w_i$ in $W_i=\sum_{j<i}w_j.$
+Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.$ Za vsak $i\in I$ definiramo $C_i:=C-w_i$, tako dobimo $C_1\geq C_2 \geq \dots \geq C_3$. Prav tako pa lahko $w_n$ označimo tudi z $w_{max}:=\max_{i\in I}w_i \hspace{0.2cm} (=w_n).$ 
+
+Definiramo še $W:=\sum_{i\in I}w_i$ ter $P:=\sum_{i\in I}p_i.$ Za vsako podmnožico $S \subset I$ je $w(s)=\sum_{i\in S}w_i$ in $W_i=\sum_{j<i}w_j.$
 
 #### Lastnost 1: *(Furini et al. (2015))*
 
@@ -90,24 +92,79 @@ Spodnja trditev dobro opiše primer zakaj se poslužujemo zgornje meje
 
 Označimo z MSMKP relaksiran problem brez omejitve kapacitete nahrbtnika. Naj velja $w_i = p_i$, za $\forall i \in I$ in naj bo $S$ optimalna rešitev (minimalne moči) relaksiranega problema, tako da, $w(S) > C$. Naj bo $k$ indeks najlažjega predmeta iz $S$, to je, $k = \arg \min_{i\in S}w_i$. Sedaj sestavimo novo rešitev $S^{'}$ kot $S^{'}=S\backslash \{k\}$. Tako imamo $w(S^{'}) + w_i \le C$ za nek predmet $i \in I \backslash S^{'}$, kajti v nasprotnem primeru bi bila $S^{'}$ maksimalna zapolnitev nahrbtnika z višjo končno vrednostjo kot $S$, kar pa je protislovje.
 
+Naj bo sedaj $\delta = C -w(S^{'})$, kar je v bistvu preostanek celotne kapacitete nahrbtnika potem, ko odstranimo $k$ iz $S$. Sedaj bomo poskušali to luknjo zapolniti z reševanjem naslednjega podproblema:
+
+$$\max \sum_{i \in I \backslash S^{'}} w_i x_i \hspace{0.5cm} \text{ tako da } \hspace{0.5cm} \sum_{i \in I \backslash S^{'}}w_i x_i \le \delta,\hspace{0.5cm} x_i \in \{0,1\}$$
+Označimo s $S^{''} $ optimalno rešitev tega problema. Očitno velja $S^{''} \ne \emptyset$. Nova rešitev $\tilde{S} = S^{'} \cup S^{''}$ tako zadostuje naslednji lastnosti: $w( \tilde{S} ) \le C$ in (po definiciji) $w(\tilde{S}) + w_i > C$ za $\forall i \notin \tilde{S}$, to je, $\tilde{S}$ je še ena dosegljiva rešitev relaksiranega problema z višjo močjo kot $S$, kar pa je protislovje.
+
 ***
 
 ## Dinamičen algoritem za reševanje MCMKP
-Z vsemi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem, ki za izvajanje porabi $O(nC)$ časa in $O(n+C)$ prostora.
-Ta algoritem je postavljen na dejstvu, da ko izvemo katera je najmanjša stvar, ki smo jo izpustili iz rešitve, se MCMKP reducira na problem, ki ima spodnjo in zgornjo mejo kapacitete. To lastnost lahko izrazimo takole:
 
-###(Proposition) "Lastnost" Trditev: 
-Optimalna MCMKP rešitev se lahko izračuna na sledeč način:
+S podanimi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem s katerim lahko rešujemo MSMKP.
+Ta algoritem je zasnovan na dejstvu, da ko enkrat poznamo najmanjši izvzeti predmet, se reševanje MCMKP reducira na problem nahrbtnika s spodnjo in zgornjo mejo kapacitete (v nadaljevanju označimo z LU-KP). To lastnost lahko izrazimo takole:
 
-$$ OPT=min_{i \in I:i\leq i_c} \bigg\{KP(i,C_L,C_U) + \sum_{j<i}p_j \bigg\},$$
+#### Trditev 4:
 
-kjer je $C_L=C-W_i-w_i+1$ in $C_U=C-W_i$ in
+Optimalno rešitev MCMKP lahko izračunamo na sledeč način:
 
-$$ KP(i,C_L,C_U)=min\bigg\{ \sum_{j>i} p_jy_j : C_L \leq \sum_{j>i}w_jy_j \leq C_U, y\text{ je binaren}\bigg\}.$$
+$$ OPT= \min_{i \in I:i\leq i_c} \bigg\{KP(i,\underline{C},\bar{C}) + \sum_{j<i}p_j \bigg\},$$
+kjer je $\underline{C} = C - W_i - w_i + 1$ in $\bar{C} = C- W_i$, in 
 
-##OPIS PROGRAMIRANJA
+$$KP(i, \underline{C}, \bar{C}) = \min \bigg\{ \sum_{j>i}p_j y_j :  \underline{C} \le \sum_{j>i}w_j y_j \le \bar{C}, y \text{ je binaren} \bigg\}.$$ 
 
-###Eksperimenti
+#### Dokaz:
+
+Naj bo $\tilde{X}$ optimalna rešitev MCMKP. Naj bo $i$ najmanjši izvzet predmet iz $\tilde{X}$. Zaradi tega vsi elementi $\{1, \dots , i-1\}$ pripadajo $\tilde{X}$. Te predme lahko izvzamemo, če maksimalno kapaciteto nahrbtnika $C$ reduciramo na $\bar{C} = C - w_i$. Potem lahko vrednost $\tilde{X}$ pridobimo kot $KP(i, \underline{C}, \bar{C}) + \sum_{j<i}p_j$, kjer je LU-KP, definiran kot zgoraj, je obravnavan na preostalih predmetih iz niza $\{i+1, \dots , n\}$. Ker mora biti rešitev $\tilde{X}$ največja zapolnitev, je minimalna kapaciteta definirana kot $\underline{C} = C - W_i - w_i + 1$ (glej Lastnost 2).
+
+Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh možnih predmerov $i \le i_c$, in izberemo najboljšo izmed dobljenih rešitev.
+
+## OPIS PROGRAMIRANJA
+
+Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora.
+
+Kot vhodne podatke bo `DinamicniAlgo` sprejel `I <- data.frame(w, p)` teže in cene predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. 
+```{r DP}
+DinamicniAlgo <- function(I,C){
+  # določim vrednost i_c
+  ind <- 0
+  sum <- 0
+  while(sum <= C){
+    ind <- ind + 1
+    sum <- sum + I$w[ind]
+  }
+  i_c <- ind
+  
+  # definiram glavni del algoritma
+  M <- c()
+  OPT <- c()
+  M[1] <- 0
+  OPT = Inf
+  M[2:(C+1)] <- c(Inf)
+  for(i in c(length(I$w):1)){
+    if(i <= i_c){
+      C_u <- max(1, (C+1 - sum(I$w[1:(i-1)])))
+      C_l <- max(1, (C+1 - sum(I$w[1:i]) + 1))
+      tmp <- min(M[C_u:C_l] + sum(I$p[1:(i-1)]))
+      if(tmp < OPT){
+        OPT <- tmp
+        i_st <- i
+        C_st <- (which(M == min(M[C_u:C_l] + sum(I$p[1:(i_st-1)]))) + sum(I$w[1:(i_st-1)]))
+      }
+    }
+    for(k in c(C:I$w[i])){
+      M[k+1] <- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+    }
+  }
+  return(OPT, C_st, i_st)
+}
+```
+
+
+***
+
+## Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP
+#### Eksperimenti
 
 
 Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je med seboj korelirana, druga skupina pa nekorelirana. Podatki so generirani v R studiu s sledečo kodo:

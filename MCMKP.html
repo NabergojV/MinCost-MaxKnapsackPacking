@@ -147,7 +147,8 @@ $(document).ready(function () {
 </div>
 <div id="lastnosti-resitve-mcmkp-ja-solution-properties" class="section level2">
 <h2>Lastnosti rešitve MCMKP-ja (solution properties)</h2>
-<p>V tem poglavju so opisane lastnosti, ki so privzete v dinamičnem algoritmu. Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.\)</span> Za vsak <span class="math inline">\(i\in I\)</span> definiramo <span class="math inline">\(C_i:=C-w_i\)</span>, tako dobimo <span class="math inline">\(C_1\geq C_2 \geq \dots \geq C_3.\)</span> <span class="math inline">\(w_n\)</span> označimo tudi z <span class="math inline">\(w_{max}:=\max_{i\in I}w_i (=w_n).\)</span> Definiramo še <span class="math inline">\(W:=\sum_{i\in I}w_i\)</span> ter <span class="math inline">\(P:=\sum_{i\in I}p_i.\)</span> Za vsako podmnožico <span class="math inline">\(S \subset I\)</span> je <span class="math inline">\(w(s)=\sum_{i\in S}w_i\)</span> in <span class="math inline">\(W_i=\sum_{j&lt;i}w_j.\)</span></p>
+<p>V tem poglavju so opisane lastnosti, ki so privzete v dinamičnem algoritmu. Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.\)</span> Za vsak <span class="math inline">\(i\in I\)</span> definiramo <span class="math inline">\(C_i:=C-w_i\)</span>, tako dobimo <span class="math inline">\(C_1\geq C_2 \geq \dots \geq C_3\)</span>. Prav tako pa lahko <span class="math inline">\(w_n\)</span> označimo tudi z <span class="math inline">\(w_{max}:=\max_{i\in I}w_i \hspace{0.2cm} (=w_n).\)</span></p>
+<p>Definiramo še <span class="math inline">\(W:=\sum_{i\in I}w_i\)</span> ter <span class="math inline">\(P:=\sum_{i\in I}p_i.\)</span> Za vsako podmnožico <span class="math inline">\(S \subset I\)</span> je <span class="math inline">\(w(s)=\sum_{i\in S}w_i\)</span> in <span class="math inline">\(W_i=\sum_{j&lt;i}w_j.\)</span></p>
 <div id="lastnost-1-furini-et-al.-2015" class="section level4">
 <h4>Lastnost 1: <em>(Furini et al. (2015))</em></h4>
 <p>V nekem naključnem, dosegljivem MCMKP z rešitvijo <span class="math inline">\(S\subset I\)</span>, je kapaciteta navzdol omejena tako: <span class="math display">\[w(S)\geq C-w_{max}+1.\]</span></p>
@@ -173,30 +174,81 @@ $(document).ready(function () {
 <h4>Dokaz:</h4>
 <p>Predpostavimo, da velja <span class="math inline">\(w(S^{'})\le C-\sum_{j&lt;i}w_j-w_i+1\)</span>. Če to drži, potem bi lahko <span class="math inline">\(i\)</span>-ti predmet dodali v <span class="math inline">\(S\)</span> ne da bi prekoračili kapaciteto nahrbtnika (ker je <span class="math inline">\(w(S^{'}) \ge 0\)</span> in vsota na desni vsebuje <span class="math inline">\(w_i\)</span>), po drugi strani pa trdimo, da je S maksimalno pakiranje nahrbtnika, kar je seveda protislovje.</p>
 </div>
-<div id="lastnost-2" class="section level3">
-<h3>Lastnost 2</h3>
+<div id="lastnost-2" class="section level4">
+<h4>Lastnost 2:</h4>
 <p>Kljub temu da imamo problem minimizacije, ni odveč definirati zgornjo mejo kapacitete nahrbtnika.</p>
 <p>Spodnja trditev dobro opiše primer zakaj se poslužujemo zgornje meje</p>
 </div>
-<div id="trditev-3" class="section level3">
-<h3>Trditev 3</h3>
+<div id="trditev-3" class="section level4">
+<h4>Trditev 3:</h4>
+<p>Če imamo <span class="math inline">\(w_i = p_i\)</span> za <span class="math inline">\(\forall i \in I\)</span>, potem kapaciteta katerekoli optimalne rešitve <span class="math inline">\(S\)</span> ne presega <span class="math inline">\(C\)</span>, tudi v primeru, ko tega pogoja ne določimo eksplicitno.</p>
+</div>
+<div id="dokaz-2" class="section level4">
+<h4>Dokaz:</h4>
+<p>Označimo z MSMKP relaksiran problem brez omejitve kapacitete nahrbtnika. Naj velja <span class="math inline">\(w_i = p_i\)</span>, za <span class="math inline">\(\forall i \in I\)</span> in naj bo <span class="math inline">\(S\)</span> optimalna rešitev (minimalne moči) relaksiranega problema, tako da, <span class="math inline">\(w(S) &gt; C\)</span>. Naj bo <span class="math inline">\(k\)</span> indeks najlažjega predmeta iz <span class="math inline">\(S\)</span>, to je, <span class="math inline">\(k = \arg \min_{i\in S}w_i\)</span>. Sedaj sestavimo novo rešitev <span class="math inline">\(S^{'}\)</span> kot <span class="math inline">\(S^{'}=S\backslash \{k\}\)</span>. Tako imamo <span class="math inline">\(w(S^{'}) + w_i \le C\)</span> za nek predmet <span class="math inline">\(i \in I \backslash S^{'}\)</span>, kajti v nasprotnem primeru bi bila <span class="math inline">\(S^{'}\)</span> maksimalna zapolnitev nahrbtnika z višjo končno vrednostjo kot <span class="math inline">\(S\)</span>, kar pa je protislovje.</p>
+<p>Naj bo sedaj <span class="math inline">\(\delta = C -w(S^{'})\)</span>, kar je v bistvu preostanek celotne kapacitete nahrbtnika potem, ko odstranimo <span class="math inline">\(k\)</span> iz <span class="math inline">\(S\)</span>. Sedaj bomo poskušali to luknjo zapolniti z reševanjem naslednjega podproblema:</p>
+<p><span class="math display">\[\max \sum_{i \in I \backslash S^{'}} w_i x_i \hspace{0.5cm} \text{ tako da } \hspace{0.5cm} \sum_{i \in I \backslash S^{'}}w_i x_i \le \delta,\hspace{0.5cm} x_i \in \{0,1\}\]</span> Označimo s $S^{’’} $ optimalno rešitev tega problema. Očitno velja <span class="math inline">\(S^{''} \ne \emptyset\)</span>. Nova rešitev <span class="math inline">\(\tilde{S} = S^{'} \cup S^{''}\)</span> tako zadostuje naslednji lastnosti: <span class="math inline">\(w( \tilde{S} ) \le C\)</span> in (po definiciji) <span class="math inline">\(w(\tilde{S}) + w_i &gt; C\)</span> za <span class="math inline">\(\forall i \notin \tilde{S}\)</span>, to je, <span class="math inline">\(\tilde{S}\)</span> je še ena dosegljiva rešitev relaksiranega problema z višjo močjo kot <span class="math inline">\(S\)</span>, kar pa je protislovje.</p>
+<hr />
 </div>
 </div>
 <div id="dinamicen-algoritem-za-resevanje-mcmkp" class="section level2">
 <h2>Dinamičen algoritem za reševanje MCMKP</h2>
-<p>Z vsemi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem, ki za izvajanje porabi <span class="math inline">\(O(nC)\)</span> časa in <span class="math inline">\(O(n+C)\)</span> prostora. Ta algoritem je postavljen na dejstvu, da ko izvemo katera je najmanjša stvar, ki smo jo izpustili iz rešitve, se MCMKP reducira na problem, ki ima spodnjo in zgornjo mejo kapacitete. To lastnost lahko izrazimo takole:</p>
-<div id="proposition-lastnost-trditev" class="section level3">
-<h3>(Proposition) “Lastnost” Trditev:</h3>
-<p>Optimalna MCMKP rešitev se lahko izračuna na sledeč način:</p>
-<p><span class="math display">\[ OPT=min_{i \in I:i\leq i_c} \bigg\{KP(i,C_L,C_U) + \sum_{j&lt;i}p_j \bigg\},\]</span></p>
-<p>kjer je <span class="math inline">\(C_L=C-W_i-w_i+1\)</span> in <span class="math inline">\(C_U=C-W_i\)</span> in</p>
-<p><span class="math display">\[ KP(i,C_L,C_U)=min\bigg\{ \sum_{j&gt;i} p_jy_j : C_L \leq \sum_{j&gt;i}w_jy_j \leq C_U, y\text{ je binaren}\bigg\}.\]</span></p>
+<p>S podanimi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem s katerim lahko rešujemo MSMKP. Ta algoritem je zasnovan na dejstvu, da ko enkrat poznamo najmanjši izvzeti predmet, se reševanje MCMKP reducira na problem nahrbtnika s spodnjo in zgornjo mejo kapacitete (v nadaljevanju označimo z LU-KP). To lastnost lahko izrazimo takole:</p>
+<div id="trditev-4" class="section level4">
+<h4>Trditev 4:</h4>
+<p>Optimalno rešitev MCMKP lahko izračunamo na sledeč način:</p>
+<p><span class="math display">\[ OPT= \min_{i \in I:i\leq i_c} \bigg\{KP(i,\underline{C},\bar{C}) + \sum_{j&lt;i}p_j \bigg\},\]</span> kjer je <span class="math inline">\(\underline{C} = C - W_i - w_i + 1\)</span> in <span class="math inline">\(\bar{C} = C- W_i\)</span>, in</p>
+<p><span class="math display">\[KP(i, \underline{C}, \bar{C}) = \min \bigg\{ \sum_{j&gt;i}p_j y_j :  \underline{C} \le \sum_{j&gt;i}w_j y_j \le \bar{C}, y \text{ je binaren} \bigg\}.\]</span></p>
+</div>
+<div id="dokaz-3" class="section level4">
+<h4>Dokaz:</h4>
+<p>Naj bo <span class="math inline">\(\tilde{X}\)</span> optimalna rešitev MCMKP. Naj bo <span class="math inline">\(i\)</span> najmanjši izvzet predmet iz <span class="math inline">\(\tilde{X}\)</span>. Zaradi tega vsi elementi <span class="math inline">\(\{1, \dots , i-1\}\)</span> pripadajo <span class="math inline">\(\tilde{X}\)</span>. Te predme lahko izvzamemo, če maksimalno kapaciteto nahrbtnika <span class="math inline">\(C\)</span> reduciramo na <span class="math inline">\(\bar{C} = C - w_i\)</span>. Potem lahko vrednost <span class="math inline">\(\tilde{X}\)</span> pridobimo kot <span class="math inline">\(KP(i, \underline{C}, \bar{C}) + \sum_{j&lt;i}p_j\)</span>, kjer je LU-KP, definiran kot zgoraj, je obravnavan na preostalih predmetih iz niza <span class="math inline">\(\{i+1, \dots , n\}\)</span>. Ker mora biti rešitev <span class="math inline">\(\tilde{X}\)</span> največja zapolnitev, je minimalna kapaciteta definirana kot <span class="math inline">\(\underline{C} = C - W_i - w_i + 1\)</span> (glej Lastnost 2).</p>
+<p>Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh možnih predmerov <span class="math inline">\(i \le i_c\)</span>, in izberemo najboljšo izmed dobljenih rešitev.</p>
 </div>
 </div>
 <div id="opis-programiranja" class="section level2">
 <h2>OPIS PROGRAMIRANJA</h2>
-<div id="eksperimenti" class="section level3">
-<h3>Eksperimenti</h3>
+<p>Na tem mestu predstaviva dinamični algoritem, ki teče v <span class="math inline">\(O(nC)\)</span> časovni zahtevnosti ter zavzame le <span class="math inline">\(O(n+C)\)</span> prostora.</p>
+<p>Kot vhodne podatke bo <code>DinamicniAlgo</code> sprejel <code>I &lt;- data.frame(w, p)</code> teže in cene predmetov urejenih po naraščajoči teži, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n\)</span>.</p>
+<pre class="r"><code>DinamicniAlgo &lt;- function(I,C){
+  # določim vrednost i_c
+  ind &lt;- 0
+  sum &lt;- 0
+  while(sum &lt;= C){
+    ind &lt;- ind + 1
+    sum &lt;- sum + I$w[ind]
+  }
+  i_c &lt;- ind
+  
+  # definiram glavni del algoritma
+  M &lt;- c()
+  OPT &lt;- c()
+  M[1] &lt;- 0
+  OPT = Inf
+  M[2:(C+1)] &lt;- c(Inf)
+  for(i in c(length(I$w):1)){
+    if(i &lt;= i_c){
+      C_u &lt;- max(1, (C+1 - sum(I$w[1:(i-1)])))
+      C_l &lt;- max(1, (C+1 - sum(I$w[1:i]) + 1))
+      tmp &lt;- min(M[C_u:C_l] + sum(I$p[1:(i-1)]))
+      if(tmp &lt; OPT){
+        OPT &lt;- tmp
+        i_st &lt;- i
+        C_st &lt;- (which(M == min(M[C_u:C_l] + sum(I$p[1:(i_st-1)]))) + sum(I$w[1:(i_st-1)]))
+      }
+    }
+    for(k in c(C:I$w[i])){
+      M[k+1] &lt;- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+    }
+  }
+  return(OPT, C_st, i_st)
+}</code></pre>
+<hr />
+</div>
+<div id="modeli-celostevilskega-linearnega-programiranja-mip-za-resevanje-mcmkp" class="section level2">
+<h2>Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP</h2>
+<div id="eksperimenti" class="section level4">
+<h4>Eksperimenti</h4>
 <p>Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je med seboj korelirana, druga skupina pa nekorelirana. Podatki so generirani v R studiu s sledečo kodo:</p>
 </div>
 </div>
