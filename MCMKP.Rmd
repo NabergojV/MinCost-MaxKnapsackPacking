@@ -126,6 +126,8 @@ Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahte
 Kot vhodne podatke bo `DinamicniAlgo` sprejel `I <- list(w, p)` teže in cene predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$.
 
 ```{r DP}
+I <- data.frame(w = c(4,3,2,1,1), p = c(1,2,6,4,3))
+C <- 5
 source("./lib/libraries.r", encoding = "UTF-8")
 DinamicniAlgo <- function(I,C){
   # določim vrednost i_c
