@@ -123,40 +123,48 @@ Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh 
 
 Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora.
 
-Kot vhodne podatke bo `DinamicniAlgo` sprejel `I <- data.frame(w, p)` teže in cene predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. 
+Kot vhodne podatke bo `DinamicniAlgo` sprejel `I <- list(w, p)` teže in cene predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$.
+
 ```{r DP}
+source("./lib/libraries.r", encoding = "UTF-8")
 DinamicniAlgo <- function(I,C){
   # določim vrednost i_c
-  ind <- 0
+  indeks <- 0
   sum <- 0
   while(sum <= C){
-    ind <- ind + 1
-    sum <- sum + I$w[ind]
+    indeks <- indeks + 1
+    sum <- sum + I$w[indeks]
   }
-  i_c <- ind
-  
+  i_c <- indeks
+  tabela <- data.frame()
   # definiram glavni del algoritma
   M <- c()
   OPT <- c()
   M[1] <- 0
   OPT = Inf
   M[2:(C+1)] <- c(Inf)
+  spodnja <- NA
+  zgornja <- NA
   for(i in c(length(I$w):1)){
     if(i <= i_c){
-      C_u <- max(1, (C+1 - sum(I$w[1:(i-1)])))
-      C_l <- max(1, (C+1 - sum(I$w[1:i]) + 1))
-      tmp <- min(M[C_u:C_l] + sum(I$p[1:(i-1)]))
+      zgornja <- max(0, (C - sum(I$w[0:(i-1)])))
+      spodnja <- max(0, (C - sum(I$w[0:(i-1)])- I$w[i] + 1))
+      tmp <- min(M[(zgornja + 1):(1 + spodnja)] + sum(I$p[0:(i-1)]))   #dodam + 1, ker se M začne pri 1 namesto pri 0
       if(tmp < OPT){
         OPT <- tmp
         i_st <- i
-        C_st <- (which(M == min(M[C_u:C_l] + sum(I$p[1:(i_st-1)]))) + sum(I$w[1:(i_st-1)]))
+        C_st <- which.min((M[(1+zgornja):(1+spodnja)] + sum(I$p[0:(i_st-1)]))) + sum(I$w[0:(i_st-1)])
       }
     }
-    for(k in c(C:I$w[i])){
-      M[k+1] <- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+    if(C>=I$w[i]){
+      for(k in c(C:I$w[i])){
+        M[k+1] <- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+      }
     }
+    tabela <- bind_rows(tabela, data.frame(i = i, p_i = I$p[i], w_i = I$w[i], "M0" = M[1], "M1" = M[2], "M2" = M[3], "M3" = M[4], "M4" = M[5], "M5" = M[6], C_l = spodnja, C_u = zgornja, P_i = sum(I$p[0:(i-1)]), W_i = sum(I$w[0:(i-1)]), OPT = OPT))
   }
-  return(OPT, C_st, i_st)
+  result <- list(OPT = OPT, C = C_st, i = i_st, tabela)
+  return(result)
 }
 ```
 
