@@ -136,7 +136,7 @@ $(document).ready(function () {
 <div id="klasicni-problem-nahrbtnika" class="section level3">
 <h3>Klasični problem nahrbtnika</h3>
 <p>Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto <span class="math inline">\(C&gt;0\)</span> in naborom predmetov <span class="math inline">\(I={1,…,n}\)</span>, z vrednostjo <span class="math inline">\(p_i≥0\)</span> in težo <span class="math inline">\(w_i≥0\)</span>. Iščemo maksimalen profit, pri katerem je teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešano celoštevilskega linearnega programiranja:</p>
-<p><span class="math display">\[\max{\bigg\{\sum_{i \in I}p_i x_i : \sum_{i \in I} w_i x_i \le C, x_i \in \{0,1\}, i \in I \bigg\}},\]</span></p>
+<p><span class="math display">\[\max{\bigg\{\sum_{i \in I}p_i x_i : \sum_{i \in I} w_i x_i \le C, x_i \in \{0,1\}, i \in I \bigg\}}, \hspace{2cm} (1)\]</span></p>
 <p>kjer vsaka spremenljivka <span class="math inline">\(x_i\)</span> zavzame vrednost 1, če je i-ti predmet v nahrbtniku. Vsi parametri so cela števila. Optimizacijski problem, ki je podoben temu problemu je tudi najin problem nahrbtnika.</p>
 <div id="definicija-1-minimalni-stroski-maksimalno-stevilo-predmetov-v-nahrbtniku---mcmkp" class="section level4">
 <h4>Definicija 1: <em>Minimalni stroški, maksimalno število predmetov v nahrbtniku - MCMKP</em></h4>
@@ -197,8 +197,9 @@ $(document).ready(function () {
 <div id="trditev-4" class="section level4">
 <h4>Trditev 4:</h4>
 <p>Optimalno rešitev MCMKP lahko izračunamo na sledeč način:</p>
-<p><span class="math display">\[ OPT= \min_{i \in I:i\leq i_c} \bigg\{KP(i,\underline{C},\bar{C}) + \sum_{j&lt;i}p_j \bigg\},\]</span> kjer je <span class="math inline">\(\underline{C} = C - W_i - w_i + 1\)</span> in <span class="math inline">\(\bar{C} = C- W_i\)</span>, in</p>
-<p><span class="math display">\[KP(i, \underline{C}, \bar{C}) = \min \bigg\{ \sum_{j&gt;i}p_j y_j :  \underline{C} \le \sum_{j&gt;i}w_j y_j \le \bar{C}, y \text{ je binaren} \bigg\}.\]</span></p>
+<p><span class="math display">\[ OPT= \min_{i \in I:i\leq i_c} \bigg\{KP(i,\underline{C},\bar{C}) + \sum_{j&lt;i}p_j \bigg\}, \hspace{2cm} (2)\]</span></p>
+<p>kjer je <span class="math inline">\(\underline{C} = C - W_i - w_i + 1\)</span> in <span class="math inline">\(\bar{C} = C- W_i\)</span>, in</p>
+<p><span class="math display">\[KP(i, \underline{C}, \bar{C}) = \min \bigg\{ \sum_{j&gt;i}p_j y_j :  \underline{C} \le \sum_{j&gt;i}w_j y_j \le \bar{C}, y \text{ je binaren} \bigg\}. \hspace{2cm} (3)\]</span></p>
 </div>
 <div id="dokaz-3" class="section level4">
 <h4>Dokaz:</h4>
@@ -208,41 +209,155 @@ $(document).ready(function () {
 </div>
 <div id="opis-programiranja" class="section level2">
 <h2>OPIS PROGRAMIRANJA</h2>
-<p>Na tem mestu predstaviva dinamični algoritem, ki teče v <span class="math inline">\(O(nC)\)</span> časovni zahtevnosti ter zavzame le <span class="math inline">\(O(n+C)\)</span> prostora.</p>
-<p>Kot vhodne podatke bo <code>DinamicniAlgo</code> sprejel <code>I &lt;- data.frame(w, p)</code> teže in cene predmetov urejenih po naraščajoči teži, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n\)</span>.</p>
-<pre class="r"><code>DinamicniAlgo &lt;- function(I,C){
+<p>Na tem mestu predstaviva dinamični algoritem, ki teče v <span class="math inline">\(O(nC)\)</span> časovni zahtevnosti ter zavzame le <span class="math inline">\(O(n+C)\)</span> prostora. Spodaj je definiran algoritem <code>DinamicniAlgo()</code>.</p>
+<p>Kot vhodne podatke bo ta algoritem sprejel <code>I &lt;- data.frame(w = c(...), p = c(...))</code> teže in cene/profitov predmetov urejenih po naraščajoči teži, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n\)</span>. Vekrot <span class="math inline">\(M\)</span> velikosti <span class="math inline">\(C+1\)</span> bo hranil sprotne rešitve problema <span class="math inline">\(KP(i, 0, C)\)</span>. Za posodabljanje vrednosti vektorja <span class="math inline">\(M\)</span>, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno <span class="math inline">\(k\)</span> (<span class="math inline">\(k \in \{0,1, \dots , C \}\)</span>), tako da je vsota cen/profitov minimizirana. V vsakem koraku <span class="math inline">\(i\)</span> (<span class="math inline">\(i = n, \dots , 1\)</span>), vrednost <span class="math inline">\(M[k+1]\)</span> hrani minimalen profit podmnožice predmetov, katerih skupna teža je natančno <span class="math inline">\(k\)</span>, pri čemer upošteva le predmete iz množice <span class="math inline">\(\{i+1, \dots , n \}\)</span>. Ko enkrat dosežemo korak <span class="math inline">\(i\)</span>, tako da velja <span class="math inline">\(i \le i_c\)</span> (to je, vsi predmeti, manjši od <span class="math inline">\(i\)</span> so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli <span class="math inline">\((2)\)</span>.</p>
+<pre class="r"><code>source(&quot;./lib/libraries.r&quot;, encoding = &quot;UTF-8&quot;)
+DinamicniAlgo &lt;- function(I,C){
   # določim vrednost i_c
-  ind &lt;- 0
+  indeks &lt;- 0
   sum &lt;- 0
   while(sum &lt;= C){
-    ind &lt;- ind + 1
-    sum &lt;- sum + I$w[ind]
+    indeks &lt;- indeks + 1
+    sum &lt;- sum + I$w[indeks]
   }
-  i_c &lt;- ind
-  
+  i_c &lt;- indeks
+  tabela &lt;- data.frame()
   # definiram glavni del algoritma
   M &lt;- c()
   OPT &lt;- c()
   M[1] &lt;- 0
   OPT = Inf
   M[2:(C+1)] &lt;- c(Inf)
+  spodnja &lt;- NA
+  zgornja &lt;- NA
   for(i in c(length(I$w):1)){
     if(i &lt;= i_c){
-      C_u &lt;- max(1, (C+1 - sum(I$w[1:(i-1)])))
-      C_l &lt;- max(1, (C+1 - sum(I$w[1:i]) + 1))
-      tmp &lt;- min(M[C_u:C_l] + sum(I$p[1:(i-1)]))
+      zgornja &lt;- max(0, (C - sum(I$w[0:(i-1)])))
+      spodnja &lt;- max(0, (C - sum(I$w[0:(i-1)])- I$w[i] + 1))
+      tmp &lt;- min(M[(zgornja + 1):(1 + spodnja)] + sum(I$p[0:(i-1)]))   #dodam + 1, ker se M začne pri 1 namesto pri 0
       if(tmp &lt; OPT){
         OPT &lt;- tmp
         i_st &lt;- i
-        C_st &lt;- (which(M == min(M[C_u:C_l] + sum(I$p[1:(i_st-1)]))) + sum(I$w[1:(i_st-1)]))
+        C_st &lt;- which.min((M[(1+spodnja):(1+zgornja)] + sum(I$p[0:(i_st-1)]))) + spodnja - 1 + sum(I$w[0:(i_st-1)])
       }
     }
-    for(k in c(C:I$w[i])){
-      M[k+1] &lt;- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+    if(C&gt;=I$w[i]){
+      for(k in c(C:I$w[i])){
+        M[k+1] &lt;- min(M[k+1], M[k+1-I$w[i]] + I$p[i])
+      }
     }
+    tabela &lt;- bind_rows(tabela, data.frame(i = i, p_i = I$p[i], w_i = I$w[i], t(M), C_l = spodnja, C_u = zgornja, P_i = sum(I$p[0:(i-1)]), W_i = sum(I$w[0:(i-1)]), OPT = OPT))
   }
-  return(OPT, C_st, i_st)
+  names(tabela) &lt;- c(&quot;i&quot;, &quot;p_i&quot;, &quot;w_i&quot;, t(paste0(&quot;C = &quot;, seq(0:(length(M)-1))-1)), &quot;C_l&quot;, &quot;C_u&quot;, &quot;P_i&quot;, &quot;W_i&quot;, &quot;OPT&quot;)
+  result &lt;- list(OPT = OPT, C = C_st, i = i_st, tabela = tabela)
+  return(result)
 }</code></pre>
+<p>Med izvajanjem algoritma lahko konstruiramo tabelo velikosti <span class="math inline">\(O(nC)\)</span>, kjer vrednosti <span class="math inline">\(M_{i}[k+1]\)</span> predstavljajo najboljšo LU-KP vrednost rešitve, kjer upoštevamo le predmete iz <span class="math inline">\(\{ i+1, \dots , n \}\)</span> ter skupno kapaciteto <span class="math inline">\(k\)</span>, <span class="math inline">\(k \in \{0, \dots , C \}\)</span>. V spodnji tabeli so ponazorjeni rezultati manjšega problema.</p>
+<pre class="r"><code>test_1 &lt;- DinamicniAlgo(data.frame(w = c(1,1,2,3,4), p = c(3,4,6,2,1)),5)
+kable(test_1$tabela, caption = &quot;Tabela 1&quot;)</code></pre>
+<table>
+<caption>Tabela 1</caption>
+<thead>
+<tr class="header">
+<th align="right">i</th>
+<th align="right">p_i</th>
+<th align="right">w_i</th>
+<th align="right">C = 0</th>
+<th align="right">C = 1</th>
+<th align="right">C = 2</th>
+<th align="right">C = 3</th>
+<th align="right">C = 4</th>
+<th align="right">C = 5</th>
+<th align="right">C_l</th>
+<th align="right">C_u</th>
+<th align="right">P_i</th>
+<th align="right">W_i</th>
+<th align="right">OPT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">Inf</td>
+<td align="right">Inf</td>
+<td align="right">Inf</td>
+<td align="right">1</td>
+<td align="right">Inf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15</td>
+<td align="right">7</td>
+<td align="right">Inf</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">Inf</td>
+<td align="right">Inf</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">Inf</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">Inf</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
 <hr />
 </div>
 <div id="modeli-celostevilskega-linearnega-programiranja-mip-za-resevanje-mcmkp" class="section level2">
