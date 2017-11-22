@@ -172,8 +172,10 @@ DinamicniAlgo <- function(I,C){
 
 Med izvajanjem algoritma lahko konstruiramo tabelo velikosti $O(nC)$, kjer vrednosti $M_{i}[k+1]$ predstavljajo najboljšo LU-KP vrednost rešitve, kjer upoštevamo le predmete iz $\{ i+1, \dots , n \}$ ter skupno kapaciteto $k$, $k \in \{0, \dots , C \}$. V spodnji tabeli so ponazorjeni rezultati manjšega problema. 
 ```{r}
-test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4), p = c(3,4,6,2,1)),5)
-kable(test_1$tabela, caption = "Tabela 1") %>% add_header_above(c("Predmet" = 1, " " = 2, "Hello" = ncol(test_1$tabela)-8, " "))
+test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4,7), p = c(3,4,6,2,1,2)),12)
+kable(test_1$tabela, caption = "Tabela 1", format = "html") %>%
+  kable_styling("striped") %>%
+  add_header_above(c("Predmet" = 3, "Kapaciteta" = ncol(test_1$tabela)-8, " " = 5))
 ```
 
 #### Trditev 5:
@@ -182,7 +184,14 @@ Optimalno vrednost rešitve MCMKP lahko z `DinamicniAlgo` izračunamo v $O(nC)$ 
 
 #### Dokaz:
 
-Glaven 
+Ključen del novega dinamičnega algoritma je dejstvo, da dinamičen program za klasičen problem nahrbtnika poda vse potrebne informacije za računanje optimalne vrednosti rešitve MCMKP. Med procesiranjem $i$-tega predmeta (opomba: predmeti so izbrani po padajoči teži), lahko poiščemo optimalno vrednost LU-KP, kjer upoštevamo primer podmnožice predmetov $\{ i+1, \dots , n \}$ za vse $k \in \{ 0, \dots , C \}$. To storimo z implementacijo sledeče rekurzije v algoritem `DinamicniAlgo()`:
+$$M_{i}[k] := 
+\begin{cases}
+\min \{M_{i}[k], M_{i+1}[k-w_i] + p_i\}, & \text{if } k \ge w_i \\
+M_{i+1}[k], & \text{sicer}
+\end{cases}\\ 
+\forall i = n, \dots , 1; k = 0, \dots C$$
+kjer so začetne vrednosti $M_{n+1}[k]:= \infty$ za vse $k = 1, \dots , C$ in $M_{n+1}[0] :=0$.
 
 ***
 
