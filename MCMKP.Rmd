@@ -211,7 +211,7 @@ Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta opti
 
 
 ### Drug dinamičen MIP algoritem
-Drug algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. Algoritem nama vrne optimalno vrednost nahrbtnika, OPT, ter seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik. V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$.
+Drug algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. Algoritem nama vrne optimalno vrednost nahrbtnika, OPT, ter seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik. V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
 ```
 program = MixedIntegerLinearProgram(maximization=False,solver="GLPK")
 vzamemo = program.new_variable(binary=True)
@@ -250,9 +250,11 @@ Ta omejitev nam pove, da teža vseh izbranih predmetov ne sme presegati kapacite
 #### Druga omejitev 
 $$\sum_{j\inI,j\neq i} min\{ W(j),Csez(i)+1\}*x_j+min\{W(c),Csez(i)+1\}*x_i \geq Csez(i)+1 \text{ za } \forall i\in I: i\leq i_c$$
 
-Te neenakosti dobimo iz 
+Te neenakosti dobimo iz:
 $$ \sum_{j\inI,j\neq i} W(j)x_j+(Csez(i)+1)x_i \geq Csez(i)+1 \text{ za } \forall i\in I: i\leq i_c$$
-To pa smo definirali že v Trditvi 1 in Lastnosti 2.
+
+To pa smo definirali že v Trditvi 1 in Lastnosti 2. Te nam zagotovijo, da če dodamo dodaten predmet $i$, za $i\leq i_c$, bo kapaciteta presežena.
+
 ***
 
 ## Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP
