@@ -212,7 +212,7 @@ Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta opti
 
 ### Drug dinamičen MIP algoritem
 Drug algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. Algoritem nama vrne optimalno vrednost nahrbtnika, OPT, ter seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik. V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
-```
+```{sage }
 program = MixedIntegerLinearProgram(maximization=False,solver="GLPK")
 vzamemo = program.new_variable(binary=True)
 P= podatki o dobičkih predmetov
