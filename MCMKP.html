@@ -576,7 +576,7 @@ M_{i+1}[k], &amp; \text{sicer}
 </div>
 <div id="eksperimenti" class="section level2">
 <h2>Eksperimenti</h2>
-<p>Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je sestavljena tako, da so teže <span class="math inline">\(w_i\)</span> in cene/profit <span class="math inline">\(p_i\)</span> med sabo korelirani, druga skupina pa nekorelirana. Izbrala sva vzorce velikosti <span class="math inline">\(\bar{N} \in \{ 10, 50, 100 \}\)</span>. Teže predmetov bova izbrala naključno porazdeljene enakomerno na <span class="math inline">\(w_i \in [1,R]\)</span>, kjer bova za <span class="math inline">\(R\)</span> vzela <span class="math inline">\(R = \{10, 100, 1000 \}\)</span>. Velikosti nahrbtnika pa definirava kot delež skupne teže predmetov, torej: <span class="math inline">\(C \in \{ \lfloor 25 \% W \rfloor , \lfloor 50 \% W \rfloor, \lfloor 75 \% W \rfloor \}\)</span>. Podatki so bili generirani v R-u s sledečo kodo:</p>
+<p>Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je sestavljena tako, da so teže <span class="math inline">\(w_i\)</span> in cene/profit <span class="math inline">\(p_i\)</span> med sabo korelirani, druga skupina pa nekorelirana. Izbrala sva vzorce velikosti <span class="math inline">\(\bar{N} \in \{ 10, 50, 100 \}\)</span>. Teže predmetov bova izbrala naključno porazdeljene enakomerno na <span class="math inline">\(w_i \in [1,R]\)</span>, kjer bova vzela <span class="math inline">\(R \in \{10, 100, 1000 \}\)</span>. Velikosti nahrbtnika pa definirava kot delež skupne teže predmetov, torej: <span class="math inline">\(C \in \{ \lfloor 25 \% W \rfloor , \lfloor 50 \% W \rfloor, \lfloor 75 \% W \rfloor \}\)</span>. Podatki so bili generirani v R-u s sledečo kodo:</p>
 <pre class="r"><code>korelirani &lt;- function(R = integer(), size = integer()){
   w_1 &lt;- sample(x = 1:R, size = size, replace = TRUE)
   p_1 &lt;- sapply(w_1, function(x){
@@ -600,10 +600,40 @@ nekorelirani &lt;- function(R = integer(), size = integer()){
 }
 
 # Podatke shranim v ./Podatki/...
-
-b &lt;- nekorelirani(100, 10)
-a &lt;- DinamicniAlgo(b$I, b$C[1])
-a$tabela %&gt;% View()</code></pre>
+R &lt;- c(10, 100, 1000)
+N &lt;- c(10, 50, 100)
+for(r in R){
+  for(n in N){
+    kor &lt;- korelirani(r, n)
+    write.csv2(x = kor, file = paste0(&quot;./Podatki/Korelirani_R&quot;, r, &quot;_N&quot;, n, &quot;.csv&quot;), fileEncoding = &quot;UTF-8&quot;)
+    nekor &lt;- nekorelirani(r, n)
+    write.csv2(x = nekor, file = paste0(&quot;./Podatki/Nekorelirani_R&quot;, r, &quot;_N&quot;, n, &quot;.csv&quot;), fileEncoding = &quot;UTF-8&quot;)
+  }
+}</code></pre>
+<p>Preverimo ali so generirani podatki res korelirani oziroma nekorelirani:</p>
+<pre class="r"><code>R &lt;- c(10, 100, 1000)
+N &lt;- c(10, 50, 100)
+Kovariance &lt;- data.frame()
+korelirane &lt;- data.frame()
+nekorelirane &lt;- data.frame()
+for(r in R){
+  vrsta1 &lt;- c()
+  vrsta2 &lt;- c()
+  for(n in N){
+    a &lt;- 
+    assign(paste0(&quot;kor_R&quot;, r, &quot;_N&quot;, n), read.csv2(file = paste0(&quot;./Podatki/Korelirani_R&quot;, r, &quot;_N&quot;, n, &quot;.csv&quot;), fileEncoding = &quot;UTF-8&quot;, row.names = &quot;X&quot;))
+    assign(paste0(&quot;nekor_R&quot;, r, &quot;_N&quot;,n), read.csv2(file = paste0(&quot;./Podatki/Nekorelirani_R&quot;, r, &quot;_N&quot;, n, &quot;.csv&quot;), fileEncoding = &quot;UTF-8&quot;, row.names = &quot;X&quot;))
+    vrsta1 &lt;- c(vrsta1, cor(get(paste0(&quot;kor_R&quot;, r, &quot;_N&quot;, n)))[2])
+    vrsta2 &lt;- c(vrsta2, cor(get(paste0(&quot;nekor_R&quot;, r, &quot;_N&quot;, n)))[2])
+  }
+  vrsta1 &lt;- t(vrsta1)
+  vrsta2 &lt;- t(vrsta2)
+  names(vrsta1) &lt;- N
+  names(vrsta2) &lt;- N
+  korelirane &lt;- bind_rows(korelirane, r = vrsta1)
+  nekorelirane &lt;- bind_rows(nekorelirane, r = vrsta2)
+}
+Kovariance &lt;- bind_cols(korelirane, nekorelirane)</code></pre>
 </div>
 
 

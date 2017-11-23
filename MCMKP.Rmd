@@ -256,6 +256,35 @@ for(r in R){
 }
 ```
 
+Preverimo ali so generirani podatki res korelirani oziroma nekorelirani:
+```{r}
+R <- c(10, 100, 1000)
+N <- c(10, 50, 100)
+Kovariance <- data.frame()
+korelirane <- data.frame()
+nekorelirane <- data.frame()
+for(r in R){
+  vrsta1 <- c()
+  vrsta2 <- c()
+  for(n in N){
+    assign(paste0("kor_R", r, "_N", n), read.csv2(file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8", row.names = "X"))
+    assign(paste0("nekor_R", r, "_N",n), read.csv2(file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8", row.names = "X"))
+    vrsta1 <- c(vrsta1, cor(get(paste0("kor_R", r, "_N", n)))[2])
+    vrsta2 <- c(vrsta2, cor(get(paste0("nekor_R", r, "_N", n)))[2])
+  }
+  vrsta1 <- t(vrsta1)
+  vrsta2 <- t(vrsta2)
+  names(vrsta1) <- N
+  names(vrsta2) <- N
+  korelirane <- bind_rows(korelirane, r = vrsta1)
+  nekorelirane <- bind_rows(nekorelirane, r = vrsta2)
+}
+Kovariance <- bind_cols(korelirane, nekorelirane)
+row.names(Kovariance) <- R
+kable(Kovariance, format = "html") %>% 
+  kable_styling("striped") %>%
+  add_header_above(c("R"=1,"Korelirani" = 3, "Nekorelirani" = 3))
+```
 
 
 
