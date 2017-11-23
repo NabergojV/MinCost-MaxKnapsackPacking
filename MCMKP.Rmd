@@ -210,7 +210,40 @@ Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v $O(n
 Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta optimalno rešitev:
 
 
+V drugem dinamičnem MIP algoritmu s sledečo kodo:
+```
+program = MixedIntegerLinearProgram(maximization=False,solver="GLPK")
+vzamemo = program.new_variable(binary=True)
+P= podatki o dobičkih predmetov
+I= število predmetov
+program.set_objective(sum(P[i] * vzamemo[i] for i in I))
 
+
+W = uteži predmetov
+C= kapaciteta nahrbtnika
+
+Csez = [C-x for x in W]
+
+#Določimo indeks kritičnega predmeta
+indeks= 0
+vsota= 0
+while(vsota<= C):
+    indeks=indeks + 1
+    vsota=vsota+ I[W[indeks]]
+end
+kriticen=indeks
+
+#Dodamo omejitve algoritma
+program.add_constraint(sum(W[i] * vzamemo[i] for i in I) <= C)
+for i in range(kriticen+1):
+    program.add_constraint(sum(min(W[j],Csez[i]+1)*vzamemo[j] for j in I if i!=j) + min(W[kriticen],Csez[i]+1)*vzamemo[i] >= Csez[i]+1)
+
+#solve nam vrne optimalno rešitev OPT, get_values nam vrne seznam 1 n 0, ki povedo katere predmete smo vzeli
+%time program.solve()
+program.get_values(vzamemo)
+program.show()
+
+```
 ***
 
 ## Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP
