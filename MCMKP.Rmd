@@ -172,7 +172,7 @@ DinamicniAlgo <- function(I,C){
 
 Med izvajanjem algoritma lahko konstruiramo tabelo velikosti $O(nC)$, kjer vrednosti $M_{i}[k+1]$ predstavljajo najboljšo LU-KP vrednost rešitve, kjer upoštevamo le predmete iz $\{ i+1, \dots , n \}$ ter skupno kapaciteto $k$, $k \in \{0, \dots , C \}$. V spodnji tabeli so ponazorjeni rezultati manjšega problema. 
 ```{r}
-test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4,7), p = c(3,4,6,2,1,2)),12)
+test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4), p = c(3,4,6,2,1)),5)
 kable(test_1$tabela, caption = "Tabela 1", format = "html") %>%
   kable_styling("striped") %>%
   add_header_above(c("Predmet" = 3, "Kapaciteta" = ncol(test_1$tabela)-8, " " = 5))
@@ -193,15 +193,69 @@ M_{i+1}[k], & \text{sicer}
 \forall i = n, \dots , 1; k = 0, \dots C$$
 kjer so začetne vrednosti $M_{n+1}[k]:= \infty$ za vse $k = 1, \dots , C$ in $M_{n+1}[0] :=0$.
 
+Izkoriščenje podobnosti med vrednostim rešitev MCMKP in LU-KP (*Trditev 5*), v vsakem koraku $i$ (začnemo s takim $i$, da velja $i \le i_c$), lahko pridobimo optimalno vrednost rešitve MCMKP, pri čemer v rešitvi upoštevamo vse še ne koriščene predmete (tiste iz množice $\{ 1, \dots , i-1 \}$). Vrednost te rešitve se hrani v spremenljivki $tmp$, usklajeno pa se posodablja tudi globalno optimalna rešitev. Opazimo, da predmeti $\{ 1, \dots , i-1 \}$ določajo preostalo kapaciteto nahrbtnika (katera je dana s $\bar{C}$), ki jo je potrebno zapolniti s predmeti iz $\{ i+1, \dots , n \}$, kjer je $\underline{C}$ določen na tak način, da bo zapolnitev maksimalna in da bo $i$-ti predmet najlažji izpuščen predmet. S tem zaključimo dokaz.
+
+Če dobro pogledamo, opazimo, da nam algoritem `DinamicniAlgo(I,C)` vrne le optimalno vrednost $OPT$. V kolikor pa bi želeli imeti optimalno rešitev $S^{*}$, pa imamo na voljo dva načina. V škodo prostorske zahtevnosti (iz $O(n+C)$ na $O(nC)$), lahko optimalno rešitev skonstruiramo v času $O(n)$. Za konstrukcijo rešitve je dovolj hraniti informacijo o tem, ali je bil predmet $i$ dodan v rešitev LU-KP v trenutnem koraku ali ne, za vsako težo $k \in \{ 0, \dots , C \}$ in korak $i = n, \dots , 1$. Hranimo sled kazalnikov $A_{i}[k+1] \in \{0,1\}$ definiranimi kot:
+$$A_{i}[k+1] := \begin{cases}
+1, & \text{če } M_{i}[k+1] = M_{i+1}[k+1-w_i]+p_i \\
+0, & \text{sicer (tj., če} M_{i}[k+1]=M_{i+1}[k+1])
+\end{cases} \\
+\forall i = n, \dots , 1, \hspace{1cm} k=0, \dots ,C$$
+Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^{*}$, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^{*}$ zahtevano s strani optimalne rešitve. Najprej določimo $S^{*} = \{ 1, \dots , i^{*}-1\}$, nato, začnemo pri $A_{i^{*}}[C^{*}-W_{i^{*}}]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
+
+#### Trditev 6:
+
+Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v $O(nC)$ času s prostorsko zahtevnostjo $O(n+C)$.
+
+Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta optimalno rešitev:
+
+
+
 ***
 
 ## Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP
-#### Eksperimenti
 
+***
 
-Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je med seboj korelirana, druga skupina pa nekorelirana. Podatki so generirani v R studiu s sledečo kodo:
-```{r koda}
+## Eksperimenti
+
+Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je sestavljena tako, da so teže $w_i$ in cene/profit $p_i$ med sabo korelirani, druga skupina pa nekorelirana. Izbrala sva vzorce velikosti $\bar{N} \in \{ 10, 50, 100 \}$. Teže predmetov bova izbrala naključno porazdeljene enakomerno na $w_i \in [1,R]$, kjer bova vzela $R \in \{10, 100, 1000 \}$. Velikosti nahrbtnika pa definirava kot delež skupne teže predmetov, torej: $C \in \{ \lfloor 25 \%  W \rfloor , \lfloor 50 \%  W \rfloor, \lfloor 75 \%  W \rfloor \}$. Podatki so bili generirani v R-u s sledečo kodo:
+```{r eval=FALSE}
+korelirani <- function(R = integer(), size = integer()){
+  w_1 <- sample(x = 1:R, size = size, replace = TRUE)
+  p_1 <- sapply(w_1, function(x){
+    a <- sample((x-100):(x+100),size = 1, replace = TRUE)
+    while(a<1){
+      a <- sample((a):(a+100),size = 1, replace = TRUE)
+      }
+    a
+    })
+  I <- data.frame(w = w_1, p = p_1)
+  I <- I[order(I$w, decreasing = FALSE),]
+  return(I)
+}
+
+nekorelirani <- function(R = integer(), size = integer()){
+  w_1 <- sample(x = 1:R, size = size, replace = TRUE)
+  p_1 <- sample(x = 1:R, size = size, replace = TRUE)
+  I <- data.frame(w = w_1, p = p_1)
+  I <- I[order(I$w, decreasing = FALSE),]
+  return(I)
+}
+
+# Podatke shranim v ./Podatki/...
+R <- c(10, 100, 1000)
+N <- c(10, 50, 100)
+for(r in R){
+  for(n in N){
+    kor <- korelirani(r, n)
+    write.csv2(x = kor, file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+    nekor <- nekorelirani(r, n)
+    write.csv2(x = nekor, file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+  }
+}
 ```
+
 
 
 
