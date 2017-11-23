@@ -33,11 +33,12 @@ kjer vsaka spremenljivka $x_i$ zavzame vrednost 1, če je i-ti predmet v nahrbtn
 
 Z začetnimi podatki $(I,p,w,C)$, je cilj najti maksimalno napolnitev nahrbtnika $S^* \subset I$, ki minimizira vrednosti izbranih stvari. 
 $$ S^* = \arg \max_{S \subset I} \bigg\{ \sum_{i \in S} p_i \bigg| \sum_{i \in S}w_i \ge C \text{ and } \sum_{i \in S \backslash {j}}w_i < C, \forall j \in S \bigg\} $$ 
-Pri problemu MCMKP privzamemo da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^*$ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter tako dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
+
+Pri problemu MCMKP privzamemo da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^\*$ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter tako dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
 
 ***
 
-## Lastnosti rešitve MCMKP-ja (solution properties)
+## Lastnosti rešitve MCMKP-ja
 
 V tem poglavju so opisane lastnosti, ki so privzete v dinamičnem algoritmu. 
 Prva lastnost je, da so vsi predmeti razvrščeni v nepadajočem zaporedju glede na njihove teže, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n.$ Za vsak $i\in I$ definiramo $C_i:=C-w_i$, tako dobimo $C_1\geq C_2 \geq \dots \geq C_3$. Prav tako pa lahko $w_n$ označimo tudi z $w_{max}:=\max_{i\in I}w_i \hspace{0.2cm} (=w_n).$ 
@@ -201,7 +202,7 @@ $$A_{i}[k+1] := \begin{cases}
 0, & \text{sicer (tj., če} M_{i}[k+1]=M_{i+1}[k+1])
 \end{cases} \\
 \forall i = n, \dots , 1, \hspace{1cm} k=0, \dots ,C$$
-Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^{*}$, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^{*}$ zahtevano s strani optimalne rešitve. Najprej določimo $S^{*} = \{ 1, \dots , i^{*}-1\}$, nato, začnemo pri $A_{i^{*}}[C^{*}-W_{i^{*}}]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
+Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^{*}$, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^{\*}$ zahtevano s strani optimalne rešitve. Najprej določimo $S^{\*} = \{ 1, \dots , i^{\*}-1\}$, nato, začnemo pri $A_{i^{*}}[C^{\*}-W_{i^{\*}}]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
 
 #### Trditev 6:
 
@@ -210,8 +211,12 @@ Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v $O(n
 Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta optimalno rešitev:
 
 
-### Drug dinamičen MIP algoritem
-Drug algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. Algoritem nama vrne optimalno vrednost nahrbtnika, OPT, ter seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik. V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
+## Dinamičen MIP algoritem
+Drug algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. V funkciji $MCMKP_MIP$ je definiran algoritem, ki nam za vhodne podatke vzame $C$-kapaciteto, $P$-vrednosti predmetov in $W$-težo predmetov, vrne pa optimalno vrednost nahrbtnika, $OPT$, seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik, ter čas izvajanja algoritma za podane vhodne podatke.
+
+#### Opomba
+V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
+
 ```{sage eval=FALSE}
 program = MixedIntegerLinearProgram(maximization=False,solver="GLPK")
 vzamemo = program.new_variable(binary=True)
@@ -254,6 +259,7 @@ Te neenakosti dobimo iz:
 $$ \sum_{j\inI,j\neq i} W(j)x_j+(Csez(i)+1)x_i \geq Csez(i)+1 \text{ za } \forall i\in I: i\leq i_c$$
 
 To pa smo definirali že v Trditvi 1 in Lastnosti 2. Te nam zagotovijo, da če dodamo dodaten predmet $i$, za $i\leq i_c$, bo kapaciteta presežena.
+
 
 ***
 
