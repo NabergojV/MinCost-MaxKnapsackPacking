@@ -1,8 +1,8 @@
 import csv
 import sys
 
-f = open('example.csv', 'rt',delimiter = ';')
-reader = csv.reader(f)
+f = open('example.csv', 'rt')
+reader = csv.reader(f,delimiter = ';')
 M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
 I, W, P = M.column(0), M.column(1), M.column(2)
 f.close()
@@ -32,6 +32,11 @@ def MCMKP_MIP(C,P,W):
     program.solve()          #time nam meri čas, ki ga algoritem porabi za delovanje
     #program.show()                 #zapiše celoten program na bolj pregleden način
 
+    from time import time
+    s = time()
+    resitev = MCMKP_MIP(C,P,W)
+    t = time()
+    trajanje = t-s # trajanje v sekundah
+    return (program.solve(),program.get_values(vzamemo),trajanje)
 
-    return (program.solve(),program.get_values(vzamemo),%time MCMKP_MIP(C,P,W))
-
+MCMKP_MIP(5,[3,4,6,2,1],[1,1,2,3,4])
