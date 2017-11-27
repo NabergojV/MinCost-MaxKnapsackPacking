@@ -500,3 +500,10 @@ print(tim[3],tabela2)
 ```
 
 Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od `MIP`.
+
+```{r}
+primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = OPT.x - OPT.y) %>% select("DP" = OPT.x, "MIP" = OPT.y, "Razlika OPT" = res, "C DP" = C.x, "C MIP" = C.y)
+kable(x = primerjava, caption = "Primerjava OPT in C", format = "html") %>% 
+  kable_styling("striped") %>%
+  add_header_above(c("Razlika v OPT" = 3, "Zapolnjenaa kapaciteta"))
+```
