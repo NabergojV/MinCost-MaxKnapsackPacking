@@ -453,12 +453,14 @@ Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavim parameter `t
 ```{r}
 Podatki <- list.files(path = "./Podatki/")[c(-1)]
 Podatki_1 <- gsub(".csv", "", Podatki)
-a <- sapply(Podatki_1, function(x){
+listi <- data.frame()
+for(x in Podatki_1){
   data <- read.csv2(paste0("./Podatki/", x, ".csv"), fileEncoding = "UTF-8", row.names = "X")
   C <- trunc(sum(data$w)*0.75)
   time <- system.time(res <- DinamicniAlgo(I = data, C, FALSE))
-  c(Time=time[3], res)
-})
+  listi <- bind_rows(listi,data.frame(name = c(x), Time=time[3], c(res), stringsAsFactors = FALSE))
+}
+write.csv2(x = listi, file = "./Podatki/Results.csv", fileEncoding = "UTF-8")
 
 ```
 
