@@ -10,19 +10,17 @@ output:
 
 ## Uvod
 
-Predstavila bova problem nahrbtnika z danim naborom predmetov, ki imajo predpisano vrednost in težo. Skušala bova poiskati maksimalno napolnitev nahrbtnika z najmanjšo skupno vrednostjo vsebovanih predmetov. Napisala bova efektiven dinamičen algoritem, ki ima psevdo-polinomsko časovno zahtevnost. Pokazala bova tudi ekvivalenco najinega problema in klasičnega problema polnjenja nahrbtnika.
+Predstavila bova problem nahrbtnika z danim naborom predmetov, ki imajo predpisano vrednost in težo. Skušala bova poiskati maksimalno napolnitev nahrbtnika z najmanjšo skupno vrednostjo vsebovanih predmetov. Napisala bova efektiven dinamičen algoritem, ki ima psevdo-polinomsko časovno zahtevnost.
 
 ***
 
 ## Kratek opis problema
 
-S tem delom bova poskusila predstaviti poglobljeno študijo točnih metod reševanja MCMKP in MPMKC do dokazljive optimalnosti. Najprej, bova podala učinkovit dinamični algoritem za reševanje MCMKP, katerega časovna zahtevnost je $O(nC)$ in prostorska zahtevnost $O(n+C)$. Nato bova predstavila nove teoretične rezultate o stabilnosti dveh najboljših MPI (»mixed-integer programming« ) modelov iz literature. Kasneje bova v obsežni računski študiji na raznolikih primerih pokazala hitrost dinamičnega algoritma v primerjavi z vrhunskim komercialnim mešano celoštevilskim programskim (MIP) reševanjem.
-
-Na koncu bova pokazala še ekvivalenco med MCMKP in MPMKC in da lahko neko optimalno rešitev MCMKP dobimo z ustrezno linearno transformacijo. Ta nakazuje, da je MPMKC prav tako šibko NP-zahteven ter, da obstaja postopek dinamičnega programiranja, ki teče v $O(n(W-C))$ času in zahteva $O(n+(W-C))$ prostora, kjer je W skupna teža vseh predmetov.
+S tem delom bova poskusila predstaviti poglobljeno študijo točnih metod reševanja MCMKP do dokazljive optimalnosti. Najprej, bova podala učinkovit dinamični algoritem za reševanje MCMKP, katerega časovna zahtevnost je $O(nC)$ in prostorska zahtevnost $O(n+C)$. Nato bova predstavila nove teoretične rezultate o stabilnosti enega izmed najboljših MPI (»mixed-integer programming« ) modelov iz literature. Kasneje bova v obsežni računski študiji na raznolikih primerih pokazala hitrost dinamičnega algoritma v primerjavi z vrhunskim komercialnim mešano celoštevilskim programskim (MIP) reševanjem.
 
 ### Klasični problem nahrbtnika
 
-Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto $C>0$ in naborom predmetov $I={1,…,n}$, z vrednostjo $p_i≥0$ in težo $w_i≥0$. Iščemo maksimalen profit, pri katerem je teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešano celoštevilskega linearnega programiranja: 
+Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto $C>0$ in naborom predmetov $I={1,…,n}$, z vrednostjo $p_i≥0$ in težo $w_i≥0$. Iščemo maksimalen profit, pri katerem teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešanega celoštevilskega linearnega programiranja: 
 
 $$\max{\bigg\{\sum_{i \in I}p_i x_i : \sum_{i \in I} w_i x_i \le C, x_i \in \{0,1\}, i \in I \bigg\}}, \hspace{2cm} (1)$$
 
@@ -34,7 +32,7 @@ kjer vsaka spremenljivka $x_i$ zavzame vrednost 1, če je i-ti predmet v nahrbtn
 Z začetnimi podatki $(I,p,w,C)$, je cilj najti maksimalno napolnitev nahrbtnika $S^* \subset I$, ki minimizira vrednosti izbranih stvari. 
 $$ S^* = \arg \max_{S \subset I} \bigg\{ \sum_{i \in S} p_i \bigg| \sum_{i \in S}w_i \ge C \text{ and } \sum_{i \in S \backslash {j}}w_i < C, \forall j \in S \bigg\} $$ 
 
-Pri problemu MCMKP privzamemo da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^* $ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter tako dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
+Pri problemu MCMKP privzamemo, da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^* $ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter s tem dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
 
 ***
 
@@ -68,7 +66,7 @@ $$ w(S)\geq C-w_c+1.$$
 
 #### Dokaz:
 
-To lahko vidimo zelo preprosto: Predvidevamo, da obstaja taka dosegljiva zapolnjenost nahrbtnika $S\subset I$, da je teža najmanjšega predmeta, ki smo ga izpustili iz $S$, $>w_c$. v tem primeru, S mora vsebovati vse predmete $i$, za katere velja $w_i\leq w_c$. Po definiciji $w_c$, je kapaciteta nahrbtnika, ki vsebuje seznam predmetov $S$, strogo večja od $C$, kar je protislovje.
+To lahko vidimo zelo preprosto: Predvidevamo, da obstaja taka dosegljiva zapolnjenost nahrbtnika $S\subset I$, da je teža najmanjšega predmeta, ki smo ga izpustili iz $S$, $>w_c$. V tem primeru mora S vsebovati vse predmete $i$, za katere velja $w_i\leq w_c$. Po definiciji $w_c$, je kapaciteta nahrbtnika, ki vsebuje seznam predmetov $S$, strogo večja od $C$, kar je protislovje.
 
 #### Trditev 2:
 
@@ -77,7 +75,7 @@ $$w(S^{'})\geq C-\sum_{j<i}w_j-w_i+1.$$
 
 #### Dokaz:
 
-Predpostavimo, da velja $w(S^{'})\le C-\sum_{j<i}w_j-w_i+1$. Če to drži, potem bi lahko $i$-ti predmet dodali v $S$ ne da bi prekoračili kapaciteto nahrbtnika (ker je $w(S^{'}) \ge 0$ in vsota na desni vsebuje $w_i$), po drugi strani pa trdimo, da je S maksimalno pakiranje nahrbtnika, kar je seveda protislovje.
+Predpostavimo, da velja $w(S^{'})\le C-\sum_{j<i}w_j-w_i+1$. Če to drži, potem bi lahko $i$-ti predmet dodali v $S$, ne da bi prekoračili kapaciteto nahrbtnika (ker je $w(S^{'}) \ge 0$ in vsota na desni vsebuje $w_i$), po drugi strani pa trdimo, da je S maksimalno pakiranje nahrbtnika, kar je seveda protislovje.
 
 #### Lastnost 2:
 
@@ -102,7 +100,7 @@ Označimo s $S^{''} $ optimalno rešitev tega problema. Očitno velja $S^{''} \n
 
 ## Dinamičen algoritem za reševanje MCMKP
 
-S podanimi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem s katerim lahko rešujemo MSMKP.
+S podanimi trditvami in definicijami lahko sedaj oblikujemo dinamičen algoritem s katerim lahko rešujemo MCMKP.
 Ta algoritem je zasnovan na dejstvu, da ko enkrat poznamo najmanjši izvzeti predmet, se reševanje MCMKP reducira na problem nahrbtnika s spodnjo in zgornjo mejo kapacitete (v nadaljevanju označimo z LU-KP). To lastnost lahko izrazimo takole:
 
 #### Trditev 4:
@@ -125,7 +123,7 @@ Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh 
 
 Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora. Spodaj je definiran algoritem `DinamicniAlgo(I, C)`.
 
-Kot vhodne podatke bo ta algoritem sprejel `I <- data.frame(w = c(...), p = c(...))` teže in cene/profitov predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. Vekrot $M$ velikosti $C+1$ bo hranil sprotne rešitve problema $KP(i, 0, C)$. Za posodabljanje vrednosti vektorja $M$, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno $k$ ($k \in \{0,1, \dots , C \}$), tako da je vsota cen/profitov minimizirana. V vsakem koraku $i$ ($i = n, \dots , 1$), vrednost $M[k+1]$ hrani minimalen profit podmnožice predmetov, katerih skupna teža je natančno $k$, pri čemer upošteva le predmete iz množice $\{i+1, \dots , n \}$. Ko enkrat dosežemo korak $i$, tako da velja $i \le i_c$ (to je, vsi predmeti, manjši od $i$ so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli $(2)$.
+Kot vhodne podatke bo ta algoritem sprejel `I <- data.frame(w = c(...), p = c(...))` teže in cene/profitov predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. Vektor $M$ velikosti $C+1$ bo hranil sprotne rešitve problema $KP(i, 0, C)$. Za posodabljanje vrednosti vektorja $M$, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno $k$ ($k \in \{0,1, \dots , C \}$), tako da je vsota cen/dobičkov minimizirana. V vsakem koraku $i$ ($i = n, \dots , 1$), vrednost $M[k+1]$ hrani minimalen dobiček podmnožice predmetov, katerih skupna teža je natančno $k$, pri čemer upošteva le predmete iz množice $\{i+1, \dots , n \}$. Ko enkrat dosežemo korak $i$, tako da velja $i \le i_c$ (to je, vsi predmeti, manjši od $i$ so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli $(2)$.
 
 ```{r DP, message=FALSE, warning=FALSE}
 source("./lib/libraries.r", encoding = "UTF-8")
@@ -183,6 +181,7 @@ DinamicniAlgo <- function(I,C,tabe){
 ```
 
 Med izvajanjem algoritma lahko konstruiramo tabelo velikosti $O(nC)$, kjer vrednosti $M_{i}[k+1]$ predstavljajo najboljšo LU-KP vrednost rešitve, kjer upoštevamo le predmete iz $\{ i+1, \dots , n \}$ ter skupno kapaciteto $k$, $k \in \{0, \dots , C \}$. V spodnji tabeli so ponazorjeni rezultati manjšega problema. 
+
 ```{r}
 test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4), p = c(3,4,6,2,1)),5,TRUE)
 kable(test_1$tabela, caption = "Tabela 1", format = "html") %>%
@@ -219,7 +218,7 @@ Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi opti
 
 Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v $O(nC)$ času s prostorsko zahtevnostjo $O(n+C)$.
 
-Dokaz bom izpustil, saj je precej dolg, dodajam pa algoritma, ki poiščeta optimalno rešitev:
+Dodana pa sta algoritma, ki poiščeta optimalno rešitev:
 
 ```{r}
 Resi <- function(N, C){
@@ -449,7 +448,7 @@ kable(Kovariance, format = "html") %>%
   add_header_above(c("R"=1,"Korelirani" = 3, "Nekorelirani" = 3))
 ```
 
-Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavim parameter `tabe` v funkciji `DinamicniAlgo(I,C,tabe)` na `FALSE`, tako da tokrat ne oblikujem tabele, da na ta način prihranim nekaj prostora. Merjen bo tudi čas, potreben za izračun optimalne vrednosti pri maksimalni zapolnitvi.
+Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavimo parameter `tabe` v funkciji `DinamicniAlgo(I,C,tabe)` na `FALSE`, tako da se tokrat ne oblikuje tabela, da na ta način prihranimo nekaj prostora. Merjen bo tudi čas, potreben za izračun optimalne vrednosti pri maksimalni zapolnitvi.
 ```{r}
 Podatki <- list.files(path = "./Podatki/")[c(-1)]
 Podatki_1 <- gsub(".csv", "", Podatki)
