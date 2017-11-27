@@ -11,7 +11,6 @@
 
 <meta name="author" content="Luka Vidic, Veronika Nabergoj" />
 
-<meta name="date" content="2017-11-09" />
 
 <title>Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo</title>
 
@@ -119,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo</h1>
 <h4 class="author"><em>Luka Vidic, Veronika Nabergoj</em></h4>
-<h4 class="date"><em>09 november 2017</em></h4>
+<h4 class="date"><em>november 2017</em></h4>
 
 </div>
 
@@ -206,9 +205,8 @@ $(document).ready(function () {
 <p>Naj bo <span class="math inline">\(\tilde{X}\)</span> optimalna rešitev MCMKP. Naj bo <span class="math inline">\(i\)</span> najmanjši izvzet predmet iz <span class="math inline">\(\tilde{X}\)</span>. Zaradi tega vsi elementi <span class="math inline">\(\{1, \dots , i-1\}\)</span> pripadajo <span class="math inline">\(\tilde{X}\)</span>. Te predme lahko izvzamemo, če maksimalno kapaciteto nahrbtnika <span class="math inline">\(C\)</span> reduciramo na <span class="math inline">\(\bar{C} = C - w_i\)</span>. Potem lahko vrednost <span class="math inline">\(\tilde{X}\)</span> pridobimo kot <span class="math inline">\(KP(i, \underline{C}, \bar{C}) + \sum_{j&lt;i}p_j\)</span>, kjer je LU-KP, definiran kot zgoraj, je obravnavan na preostalih predmetih iz niza <span class="math inline">\(\{i+1, \dots , n\}\)</span>. Ker mora biti rešitev <span class="math inline">\(\tilde{X}\)</span> največja zapolnitev, je minimalna kapaciteta definirana kot <span class="math inline">\(\underline{C} = C - W_i - w_i + 1\)</span> (glej Lastnost 2).</p>
 <p>Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh možnih predmerov <span class="math inline">\(i \le i_c\)</span>, in izberemo najboljšo izmed dobljenih rešitev.</p>
 </div>
-</div>
-<div id="opis-programiranja" class="section level2">
-<h2>OPIS PROGRAMIRANJA</h2>
+<div id="opis-programiranja" class="section level3">
+<h3>Opis programiranja</h3>
 <p>Na tem mestu predstaviva dinamični algoritem, ki teče v <span class="math inline">\(O(nC)\)</span> časovni zahtevnosti ter zavzame le <span class="math inline">\(O(n+C)\)</span> prostora. Spodaj je definiran algoritem <code>DinamicniAlgo(I, C)</code>.</p>
 <p>Kot vhodne podatke bo ta algoritem sprejel <code>I &lt;- data.frame(w = c(...), p = c(...))</code> teže in cene/profitov predmetov urejenih po naraščajoči teži, torej <span class="math inline">\(w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n\)</span>. Vektor <span class="math inline">\(M\)</span> velikosti <span class="math inline">\(C+1\)</span> bo hranil sprotne rešitve problema <span class="math inline">\(KP(i, 0, C)\)</span>. Za posodabljanje vrednosti vektorja <span class="math inline">\(M\)</span>, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno <span class="math inline">\(k\)</span> (<span class="math inline">\(k \in \{0,1, \dots , C \}\)</span>), tako da je vsota cen/dobičkov minimizirana. V vsakem koraku <span class="math inline">\(i\)</span> (<span class="math inline">\(i = n, \dots , 1\)</span>), vrednost <span class="math inline">\(M[k+1]\)</span> hrani minimalen dobiček podmnožice predmetov, katerih skupna teža je natančno <span class="math inline">\(k\)</span>, pri čemer upošteva le predmete iz množice <span class="math inline">\(\{i+1, \dots , n \}\)</span>. Ko enkrat dosežemo korak <span class="math inline">\(i\)</span>, tako da velja <span class="math inline">\(i \le i_c\)</span> (to je, vsi predmeti, manjši od <span class="math inline">\(i\)</span> so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli <span class="math inline">\((2)\)</span>.</p>
 <pre class="r"><code>source(&quot;./lib/libraries.r&quot;, encoding = &quot;UTF-8&quot;)
@@ -574,84 +572,6 @@ M_{i+1}[k], &amp; \text{sicer}
 \end{cases} \\
 \forall i = n, \dots , 1, \hspace{1cm} k=0, \dots ,C\]</span> Potem ko pridobimo optimalno vrednost rešitve <span class="math inline">\(OPT\)</span>, lahko zračunamo tudi optimalno rešitev $S^* $, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (<em>backtracking procedure</em>). Spomnimo se, da nam algoritem <code>DinamicniAlgo(I,C)</code> vrne kapaciteto $C^* $ zahtevano s strani optimalne rešitve. Najprej določimo <span class="math inline">\(S^* = \{ 1, \dots , i^* -1\}\)</span>, nato, začnemo pri <span class="math inline">\(A_{i^* }[C^* -W_{i^* }]\)</span>, nato nadaljujemo s procesom vzvratnega reševanja za KP.</p>
 </div>
-<div id="trditev-6" class="section level4">
-<h4>Trditev 6:</h4>
-<p>Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v <span class="math inline">\(O(nC)\)</span> času s prostorsko zahtevnostjo <span class="math inline">\(O(n+C)\)</span>.</p>
-<p>Dodana pa sta algoritma, ki poiščeta optimalno rešitev:</p>
-<pre class="r"><code>Resi &lt;- function(N, C){
-  z_st &lt;- c()
-  X_st &lt;- c()
-  z_st[1] &lt;- 0
-  for(k in c(2:C+1)){
-    z_st[k] &lt;- Inf
-    if(length(N$w)==1){
-      X_st[k] &lt;- c()
-    }
-  }
-  if(length(N$w)==1){
-    X_st[1] &lt;- c()
-    X_st[N$w[1]+1] &lt;- N
-  }
-  for(i in c(length(N$w):1)){
-    if((C)&gt;=N$w[i]){
-      for(k in c((C+1):(N$w[i]+1))){
-      z_st[k] &lt;- min(c(z_st[k], z_st[k-N$w[i]] + N$p[i]))
-      }
-    }
-  }
-  if(length(N$w)==1){
-    result &lt;- list(X_st = X_st, z_st = z_st)
-    return(result)
-  }
-  result &lt;- c(z_st = z_st)
-  return(result)
-}
-
-Rekurziven_DP &lt;- function(N, C, z_st){
-  N_st &lt;- c()
-  C_st &lt;- 0
-  X_st &lt;- c()
-  particija &lt;- trunc(length(N$w)/2)
-  N_1 &lt;- N[1:particija,]
-  N_2 &lt;- N[(particija+1):nrow(N$w),]
-  z_st_1 &lt;- Resi(N_1, C)
-  z_st_2 &lt;- Resi(N_2, C)
-  if(length(N_1$w) != 1 &amp;&amp; length(N_2$w) != 1){
-    z &lt;- sapply(c(1:(C+1)), function(ind){
-      z_st_1[ind] + z_st_2[(C+1)-ind]
-    })
-    C_1 &lt;- which(z == z_st) %&gt;% head(1)
-    C_1 &lt;- C_1 - 1
-    C_2 &lt;- C - C_1
-  }
-  if(length(N_1$w) == 1 &amp;&amp; length(N_2$w) != 1){
-    z &lt;- sapply(c(1:(C+1)), function(ind){
-      z_st_1[2][ind] + z_st_2[(C+1)-ind]
-    })
-    C_1 &lt;- which(z == z_st) %&gt;% head(1)
-    C_1 &lt;- C_1 - 1
-    C_2 &lt;- C - C_1
-  }
-  if(length(N_1$w) != 1 &amp;&amp; length(N_2$w) == 1){
-    z &lt;- sapply(c(1:(C+1)), function(ind){
-      z_st_1[ind] + z_st_2[2][(C+1)-ind]
-    })
-    C_1 &lt;- which(z == z_st) %&gt;% head(1)
-    C_1 &lt;- C_1 - 1
-    C_2 &lt;- C - C_1
-  }
-  if(length(N_1$w) == 1 &amp;&amp; length(N_2$w) == 1){
-    z &lt;- sapply(c(1:(C+1)), function(ind){
-      z_st_1[2][ind] + z_st_2[2][(C+1)-ind]
-    })
-    C_1 &lt;- which(z == z_st) %&gt;% head(1)
-    C_1 &lt;- C_1 - 1
-    C_2 &lt;- C - C_1
-  }
-  if(length(N_1$w) == 1){
-    # tukaj naletim na težavo, saj ne vem kako naj bi izgledal Merge...
-    }
-  }</code></pre>
 </div>
 </div>
 <div id="dinamicen-mip-algoritem-za-resevanje-mcmkp" class="section level2">
@@ -716,10 +636,6 @@ for i in imena:
 seznamresitev</code></pre>
 <hr />
 </div>
-</div>
-<div id="modeli-celostevilskega-linearnega-programiranja-mip-za-resevanje-mcmkp" class="section level2">
-<h2>Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP</h2>
-<hr />
 </div>
 <div id="eksperimenti" class="section level2">
 <h2>Eksperimenti</h2>
@@ -1078,9 +994,230 @@ tim &lt;- system.time(for(i in c(1:10000000)){
   k &lt;- k+i
 })
 sage_time &lt;- 4.56
-tabela2 &lt;- data.frame(&quot;time.r&quot;=tim[3],time_sage=sage_time)
-print(tim[3],tabela2)</code></pre>
+tabela2 &lt;- data.frame(&quot;time_r&quot;=tim[3],time_sage=sage_time)
+print(tabela2)</code></pre>
+<pre><code>##         time_r time_sage
+## elapsed   0.78      4.56</code></pre>
 <p>Izkazalo se je, da je <code>R</code> hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od <code>MIP</code>.</p>
+<pre class="r"><code>primerjava &lt;- left_join(listi, sage, by = &quot;name&quot;) %&gt;% mutate(res = OPT.x - OPT.y) %&gt;% select(&quot;DP&quot; = OPT.x, &quot;MIP&quot; = OPT.y, &quot;Razlika OPT&quot; = res, &quot;C DP&quot; = C.x, &quot;C MIP&quot; = C.y)</code></pre>
+<pre><code>## Warning: Column `name` joining factors with different levels, coercing to
+## character vector</code></pre>
+<pre class="r"><code>kable(x = primerjava, caption = &quot;Primerjava OPT in C&quot;, format = &quot;html&quot;) %&gt;% 
+  kable_styling(&quot;striped&quot;) %&gt;%
+  add_header_above(c(&quot;Razlika v OPT&quot; = 3, &quot;Zapolnjena kapaciteta&quot; = 2))</code></pre>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+Primerjava OPT in C
+</caption>
+<thead>
+<tr>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+Razlika v OPT
+</div>
+</th>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+Zapolnjena kapaciteta
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:right;">
+DP
+</th>
+<th style="text-align:right;">
+MIP
+</th>
+<th style="text-align:right;">
+Razlika OPT
+</th>
+<th style="text-align:right;">
+C DP
+</th>
+<th style="text-align:right;">
+C MIP
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+241
+</td>
+<td style="text-align:right;">
+245
+</td>
+<td style="text-align:right;">
+-4
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2139
+</td>
+<td style="text-align:right;">
+2147
+</td>
+<td style="text-align:right;">
+-8
+</td>
+<td style="text-align:right;">
+435
+</td>
+<td style="text-align:right;">
+436
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+851
+</td>
+<td style="text-align:right;">
+851
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+192
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+220
+</td>
+<td style="text-align:right;">
+220
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+321
+</td>
+<td style="text-align:right;">
+321
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3801
+</td>
+<td style="text-align:right;">
+3807
+</td>
+<td style="text-align:right;">
+-6
+</td>
+<td style="text-align:right;">
+4291
+</td>
+<td style="text-align:right;">
+4292
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+33556
+</td>
+<td style="text-align:right;">
+33556
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+38087
+</td>
+<td style="text-align:right;">
+38087
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1872
+</td>
+<td style="text-align:right;">
+1872
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1874
+</td>
+<td style="text-align:right;">
+1874
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169576
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+191766
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3690
+</td>
+<td style="text-align:right;">
+3690
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3727
+</td>
+<td style="text-align:right;">
+3727
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34945
+</td>
+<td style="text-align:right;">
+34945
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+37193
+</td>
+<td style="text-align:right;">
+37193
+</td>
+</tr>
+</tbody>
+</table>
+<p>Kot vidimo, se kapaciteta nahrbtnika razlikuje pri 3 eksperimentih. Vzrok temu je zaokroževanje, saj sva v <code>MCMKP_MIP()</code> uporabila funkcijo <code>round()</code> v <code>DinamcniAlgo()</code> pa funkcijo <code>trunc()</code>. Posledično se razlika pojavi tudi v <code>OPT</code>.</p>
+</div>
+<div id="zakljucek" class="section level2">
+<h2>Zaključek</h2>
+<p>Za nadaljevanje bi bilo smiselno končati še algoritma v skripti <code>Solve.r</code>, saj bi tako dobili še seznam predmetov v nahrbtniku pri optimalni rešitvi. Zanimivo bi bilo videti še, kako se algoritma obnašata na večji količini podatkov. Poskusila sva z večjim številom predmetov (N=5000), kar pa je zahtevalo 20.000 sekund, v Sage-u pa še celo več. Problem se nama je zdel zelo zanimiv, saj se lahko aplicira na življenjske primere.</p>
 </div>
 
 

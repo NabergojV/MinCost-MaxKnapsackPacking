@@ -1,7 +1,7 @@
 ---
 title: "Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
 author: "Luka Vidic, Veronika Nabergoj"
-date: "09 november 2017"
+date: "november 2017"
 output:
   html_document: default
   word_document: default
@@ -119,7 +119,7 @@ Naj bo $\tilde{X}$ optimalna rešitev MCMKP. Naj bo $i$ najmanjši izvzet predme
 
 Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh možnih predmerov $i \le i_c$, in izberemo najboljšo izmed dobljenih rešitev.
 
-## OPIS PROGRAMIRANJA
+### Opis programiranja
 
 Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora. Spodaj je definiran algoritem `DinamicniAlgo(I, C)`.
 
@@ -214,90 +214,6 @@ $$A_{i}[k+1] := \begin{cases}
 \forall i = n, \dots , 1, \hspace{1cm} k=0, \dots ,C$$
 Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^* $, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^* $ zahtevano s strani optimalne rešitve. Najprej določimo $S^* = \{ 1, \dots , i^* -1\}$, nato, začnemo pri $A_{i^* }[C^* -W_{i^* }]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
 
-#### Trditev 6:
-
-Optimalna rešitev in optimalna vrednost rešitve MCMKP lahko izračunamo v $O(nC)$ času s prostorsko zahtevnostjo $O(n+C)$.
-
-Dodana pa sta algoritma, ki poiščeta optimalno rešitev:
-
-```{r}
-Resi <- function(N, C){
-  z_st <- c()
-  X_st <- c()
-  z_st[1] <- 0
-  for(k in c(2:C+1)){
-    z_st[k] <- Inf
-    if(length(N$w)==1){
-      X_st[k] <- c()
-    }
-  }
-  if(length(N$w)==1){
-    X_st[1] <- c()
-    X_st[N$w[1]+1] <- N
-  }
-  for(i in c(length(N$w):1)){
-    if((C)>=N$w[i]){
-      for(k in c((C+1):(N$w[i]+1))){
-      z_st[k] <- min(c(z_st[k], z_st[k-N$w[i]] + N$p[i]))
-      }
-    }
-  }
-  if(length(N$w)==1){
-    result <- list(X_st = X_st, z_st = z_st)
-    return(result)
-  }
-  result <- c(z_st = z_st)
-  return(result)
-}
-
-Rekurziven_DP <- function(N, C, z_st){
-  N_st <- c()
-  C_st <- 0
-  X_st <- c()
-  particija <- trunc(length(N$w)/2)
-  N_1 <- N[1:particija,]
-  N_2 <- N[(particija+1):nrow(N$w),]
-  z_st_1 <- Resi(N_1, C)
-  z_st_2 <- Resi(N_2, C)
-  if(length(N_1$w) != 1 && length(N_2$w) != 1){
-    z <- sapply(c(1:(C+1)), function(ind){
-      z_st_1[ind] + z_st_2[(C+1)-ind]
-    })
-    C_1 <- which(z == z_st) %>% head(1)
-    C_1 <- C_1 - 1
-    C_2 <- C - C_1
-  }
-  if(length(N_1$w) == 1 && length(N_2$w) != 1){
-    z <- sapply(c(1:(C+1)), function(ind){
-      z_st_1[2][ind] + z_st_2[(C+1)-ind]
-    })
-    C_1 <- which(z == z_st) %>% head(1)
-    C_1 <- C_1 - 1
-    C_2 <- C - C_1
-  }
-  if(length(N_1$w) != 1 && length(N_2$w) == 1){
-    z <- sapply(c(1:(C+1)), function(ind){
-      z_st_1[ind] + z_st_2[2][(C+1)-ind]
-    })
-    C_1 <- which(z == z_st) %>% head(1)
-    C_1 <- C_1 - 1
-    C_2 <- C - C_1
-  }
-  if(length(N_1$w) == 1 && length(N_2$w) == 1){
-    z <- sapply(c(1:(C+1)), function(ind){
-      z_st_1[2][ind] + z_st_2[2][(C+1)-ind]
-    })
-    C_1 <- which(z == z_st) %>% head(1)
-    C_1 <- C_1 - 1
-    C_2 <- C - C_1
-  }
-  if(length(N_1$w) == 1){
-    # tukaj naletim na težavo, saj ne vem kako naj bi izgledal Merge...
-    }
-  }
-
-```
-
 ## Dinamičen MIP algoritem za reševanje MCMKP
 
 Ta algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. V funkciji $MCMKP_MIP$ je definiran algoritem, ki nam za vhodne podatke vzame $C$-kapaciteto, $P$-vrednosti predmetov in $W$-težo predmetov, vrne pa optimalno vrednost nahrbtnika, $OPT$, seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik, ter čas izvajanja algoritma za podane vhodne podatke. Čas izvajanja izmerimo s pomočjo vgrajene funkcije $time$. Čas odčitamo na začetku izvajanja algoritma s $s$ ter po izvedenem algoritmu ponovno preberemo čas $t$, nato pa odštejemo in dobimo čas trajanja.
@@ -369,9 +285,6 @@ for i in imena:
     seznamresitev.append(MCMKP_MIP(C,P,W))
 seznamresitev
 ```
-***
-
-## Modeli celoštevilskega linearnega programiranja (MIP) za reševanje MCMKP
 
 ***
 
@@ -495,8 +408,8 @@ tim <- system.time(for(i in c(1:10000000)){
   k <- k+i
 })
 sage_time <- 4.56
-tabela2 <- data.frame("time.r"=tim[3],time_sage=sage_time)
-print(tim[3],tabela2)
+tabela2 <- data.frame("time_r"=tim[3],time_sage=sage_time)
+print(tabela2)
 ```
 
 Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od `MIP`.
@@ -505,5 +418,10 @@ Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični
 primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = OPT.x - OPT.y) %>% select("DP" = OPT.x, "MIP" = OPT.y, "Razlika OPT" = res, "C DP" = C.x, "C MIP" = C.y)
 kable(x = primerjava, caption = "Primerjava OPT in C", format = "html") %>% 
   kable_styling("striped") %>%
-  add_header_above(c("Razlika v OPT" = 3, "Zapolnjenaa kapaciteta"))
+  add_header_above(c("Razlika v OPT" = 3, "Zapolnjena kapaciteta" = 2))
 ```
+
+Kot vidimo, se kapaciteta nahrbtnika razlikuje pri 3 eksperimentih. Vzrok temu je zaokroževanje, saj sva v `MCMKP_MIP()` uporabila funkcijo `round()` v `DinamcniAlgo()` pa funkcijo `trunc()`. Posledično se razlika pojavi tudi v `OPT`.
+
+## Zaključek
+Za nadaljevanje bi bilo smiselno končati še algoritma v skripti `Solve.r`, saj bi tako dobili še seznam predmetov v nahrbtniku pri optimalni rešitvi. Zanimivo bi bilo videti še, kako se algoritma obnašata na večji količini podatkov. Poskusila sva z večjim številom predmetov (N=5000), kar pa je zahtevalo 20.000 sekund, v Sage-u pa še celo več. Problem se nama je zdel zelo zanimiv, saj se lahko aplicira na življenjske primere.
