@@ -305,7 +305,7 @@ Ta algoritem sva zapisala v Sage-u, ker je boljša izbira kot R studio. Podatke 
 #### Opomba
 V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
 
-```{sage ,eval=FALSE}
+```{sage }
 def MCMKP_MIP(C,P,W):
     from time import time
     s = time()
@@ -354,7 +354,7 @@ $$ \sum_{j\in I,j\neq i} W(j)x_j+(Csez(i)+1)x_i \geq Csez(i)+1 \text{ za } \fora
 To pa smo definirali že v Trditvi 1 in Lastnosti 2. Te nam zagotovijo, da če dodamo dodaten predmet $i$, za $i\leq i_c$, bo kapaciteta presežena.
 
 Podatki, ki sva jih vnesla v funkcijo algoritma so bili uvoženi iz $R-studia$ in zapisani v $csv$ obliki. Prebrani so bili s sledečo kodo:
-```{sage eval=FALSE}
+```{sage}
 import csv
 import sys
 
