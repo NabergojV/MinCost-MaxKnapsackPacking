@@ -453,8 +453,15 @@ Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavim parameter `t
 ```{r}
 Podatki <- list.files(path = "./Podatki/")[c(-1)]
 Podatki_1 <- gsub(".csv", "", Podatki)
-listi <- data.frame()
-for(x in Podatki_1){
+if(file.exists("./Rezultati/Results.csv")){
+  listi <- read.csv2("./Rezultati/Results.csv", fileEncoding = "UTF-8", row.names = "X")
+  Podatki_1 <- setdiff(Podatki_1, listi$name)
+}
+else{
+  listi <- data.frame()
+}
+for(x in Podatki_1[c(-16, -3, -11, -2, -1)]){
+  cat(x, "\n")
   data <- read.csv2(paste0("./Podatki/", x, ".csv"), fileEncoding = "UTF-8", row.names = "X")
   C <- trunc(sum(data$w)*0.75)
   time <- system.time(res <- DinamicniAlgo(I = data, C, FALSE))
@@ -465,7 +472,24 @@ write.csv2(x = listi, file = "./Podatki/Results.csv", fileEncoding = "UTF-8")
 ```
 
 
+```{r}
+sage <- read.csv2(file = "./Rezultati/sa.csv", fileEncoding = "UTF-8", row.names = "X")
+primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = Time.x - Time.y) %>% select("DP" = Time.x, "MIP" = Time.y, "Razlika" = res)
+kable(x = primerjava, caption = "Primerjava", format = "html") %>% 
+  kable_styling("striped") %>%
+  add_header_above(c("Čas merjen v sekundah" = 3))
+```
 
+Opazila sva, da se je v najnem primeru zgodilo, da je bilo računanje z `MIP` metodo hitrejše kakor z metodo `DP`, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu sage izvaja na oblaku z vejo kapaciteto in boljčimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:
+```{r eval=FALSE}
+k <- 0
+tim <- system.time(for(i in c(1:10000000)){
+  k <- k+i
+})
+sage_time <- 4.56
+print(tim[3],
+
+```
 
 
 
