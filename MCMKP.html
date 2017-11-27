@@ -688,10 +688,12 @@ Rekurziven_DP &lt;- function(N, C, z_st){
     program.solve()          #time nam meri čas, ki ga algoritem porabi za delovanje
     #program.show()                 #zapiše celoten program na bolj pregleden način
 
+    resitev = program.get_values(vzamemo)
+    koncniC = sum(resitev[i] * w for i, w in enumerate(W))
     t = time()
-    trajanje = t-s    #izmerimo čas, trajanje je v sekundah
- 
-    return (program.solve(),program.get_values(vzamemo),trajanje)</code></pre>
+    trajanje = t-s # trajanje v sekundah
+    #če bi želeli dodati še seznam predmetov, ki smo jih vzeli damo v return še program.get_values(vzamemo)
+    return (program.solve(),trajanje,koncniC)</code></pre>
 </div>
 <div id="prva-omejitev" class="section level4">
 <h4>Prva omejitev</h4>
@@ -702,12 +704,16 @@ Rekurziven_DP &lt;- function(N, C, z_st){
 <pre class="sage"><code>import csv
 import sys
 
-f = open('example.csv', 'rt')
-reader = csv.reader(f,delimiter = ';')
-M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
-I, W, P = M.column(0), M.column(1), M.column(2)
-f.close()
-C=sum(W)</code></pre>
+seznamresitev = []
+for i in imena:
+    f = open(i, 'rt')
+    reader = csv.reader(f,delimiter = ';')
+    M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
+    W, P = M.column(1), M.column(2)
+    f.close()
+    C=round((sum(W)*75)/100,0) #vzamemo 75% teže vseh predmetov
+    seznamresitev.append(MCMKP_MIP(C,P,W))
+seznamresitev</code></pre>
 <hr />
 </div>
 </div>
@@ -1066,13 +1072,15 @@ NA
 </tr>
 </tbody>
 </table>
-<p>Opazila sva, da se je v najnem primeru zgodilo, da je bilo računanje z <code>MIP</code> metodo hitrejše kakor z metodo <code>DP</code>, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:</p>
+<p>Opazila sva, da se je v najinem primeru zgodilo, da je bilo računanje z <code>MIP</code> metodo hitrejše kakor z metodo <code>DP</code>, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu Sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:</p>
 <pre class="r"><code>k &lt;- 0
 tim &lt;- system.time(for(i in c(1:10000000)){
   k &lt;- k+i
 })
 sage_time &lt;- 4.56
-print(tim[3],</code></pre>
+tabela2 &lt;- data.frame(&quot;time.r&quot;=tim[3],time_sage=sage_time)
+print(tim[3],tabela2)</code></pre>
+<p>Izkazalo se je, da je <code>R</code> hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od <code>MIP</code>.</p>
 </div>
 
 

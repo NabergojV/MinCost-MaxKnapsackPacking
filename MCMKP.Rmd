@@ -489,14 +489,14 @@ kable(x = primerjava, caption = "Primerjava", format = "html") %>%
 ```
 
 Opazila sva, da se je v najinem primeru zgodilo, da je bilo računanje z `MIP` metodo hitrejše kakor z metodo `DP`, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu Sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:
-```{r eval=FALSE}
+```{r}
 k <- 0
 tim <- system.time(for(i in c(1:10000000)){
   k <- k+i
 })
 sage_time <- 4.56
-print(tim[3],
-
+tabela2 <- data.frame("time.r"=tim[3],time_sage=sage_time)
+print(tim[3],tabela2)
 ```
 
-Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je algoritem  tudi hitrejši.
+Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od `MIP`.
