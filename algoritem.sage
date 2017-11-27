@@ -1,4 +1,8 @@
-︠fa24fe1f-8fc5-4748-94bf-ccce621747b0︠
+import csv
+import sys
+imena=['Korelirani_R10_N10.csv','Korelirani_R10_N100.csv','Korelirani_R10_N50.csv','Korelirani_R100_N10.csv','Korelirani_R100_N100.csv','Korelirani_R100_N50.csv','Korelirani_R100_N1000.csv','Korelirani_R1000_N10.csv','Korelirani_R1000_N100.csv','Korelirani_R1000_N50.csv','Korelirani_R100_N5000.csv','Nekorelirani_R10_N10.csv','Nekorelirani_R10_N100.csv','Nekorelirani_R10_N50.csv','Nekorelirani_R100_N10.csv','Nekorelirani_R100_N100.csv','Nekorelirani_R100_N50.csv','Nekorelirani_R1000_N10.csv','Nekorelirani_R1000_N100.csv','Nekorelirani_R1000_N50.csv','Nekorelirani_R100_N1000.csv','Nekorelirani_R100_N5000.csv','Nekorelirani_R1000_N1000.csv','Nekorelirani_R1000_N5000.csv']
+
+
 def MCMKP_MIP(C,P,W):
     from time import time
     s = time()
@@ -26,14 +30,25 @@ def MCMKP_MIP(C,P,W):
     #solve nam vrne optimalno rešitev OPT, get_values nam vrne seznam 1 n 0, ki povedo katere predmete smo vzeli
     program.solve()          #time nam meri čas, ki ga algoritem porabi za delovanje
     #program.show()                 #zapiše celoten program na bolj pregleden način
-    koncniC=dict.values(program.get_values(vzamemo))*W
-
+    
+    resitev = program.get_values(vzamemo)
+    koncniC = sum(resitev[i] * w for i, w in enumerate(W))
+    
     t = time()
     trajanje = t-s # trajanje v sekundah
     #če bi želeli dodati še seznam predmetov, ki smo jih vzeli damo v return še program.get_values(vzamemo)
     return (program.solve(),trajanje,koncniC)
 
-
+seznamresitev = []
+for i in imena:
+    f = open(i, 'rt')
+    reader = csv.reader(f,delimiter = ';')
+    M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
+    W, P = M.column(1), M.column(2)
+    f.close()
+    C=round((sum(W)*75)/100,0) #vzamemo 75% teže vseh predmetov
+    seznamresitev.append(MCMKP_MIP(C,P,W))
+seznamresitev
 
 
 
