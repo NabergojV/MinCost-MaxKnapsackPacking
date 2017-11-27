@@ -334,11 +334,14 @@ def MCMKP_MIP(C,P,W):
     program.solve()          #time nam meri čas, ki ga algoritem porabi za delovanje
     #program.show()                 #zapiše celoten program na bolj pregleden način
 
+    resitev = program.get_values(vzamemo)
+    koncniC = sum(resitev[i] * w for i, w in enumerate(W))
     t = time()
-    trajanje = t-s    #izmerimo čas, trajanje je v sekundah
- 
-    return (program.solve(),program.get_values(vzamemo),trajanje)
+    trajanje = t-s # trajanje v sekundah
+    #če bi želeli dodati še seznam predmetov, ki smo jih vzeli damo v return še program.get_values(vzamemo)
+    return (program.solve(),trajanje,koncniC)
 ```
+
 #### Prva omejitev 
 $$\sum_{i\in I}W(i) * vzamemo(i) \leq C$$
 Ta omejitev nam pove, da teža vseh izbranih predmetov ne sme presegati kapacitete $C$.
@@ -355,12 +358,16 @@ Podatki, ki sva jih vnesla v funkcijo algoritma so bili uvoženi iz $R-studia$ i
 import csv
 import sys
 
-f = open('example.csv', 'rt')
-reader = csv.reader(f,delimiter = ';')
-M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
-I, W, P = M.column(0), M.column(1), M.column(2)
-f.close()
-C=sum(W)
+seznamresitev = []
+for i in imena:
+    f = open(i, 'rt')
+    reader = csv.reader(f,delimiter = ';')
+    M = matrix([[RR(a),RR(b),RR(c)] for a,b,c in reader])
+    W, P = M.column(1), M.column(2)
+    f.close()
+    C=round((sum(W)*75)/100,0) #vzamemo 75% teže vseh predmetov
+    seznamresitev.append(MCMKP_MIP(C,P,W))
+seznamresitev
 ```
 ***
 
@@ -450,7 +457,7 @@ kable(Kovariance, format = "html") %>%
 
 Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavimo parameter `tabe` v funkciji `DinamicniAlgo(I,C,tabe)` na `FALSE`, tako da se tokrat ne oblikuje tabela, da na ta način prihranimo nekaj prostora. Merjen bo tudi čas, potreben za izračun optimalne vrednosti pri maksimalni zapolnitvi.
 
-```{r}
+```{r eval=FALSE}
 Podatki <- list.files(path = "./Podatki/")[c(-1)]
 Podatki_1 <- gsub(".csv", "", Podatki)
 if(file.exists("./Rezultati/Results.csv")){
@@ -460,7 +467,7 @@ if(file.exists("./Rezultati/Results.csv")){
 else{
   listi <- data.frame()
 }
-for(x in Podatki_1[c(-16, -3, -11, -2, -1)]){
+for(x in Podatki_1){
   cat(x, "\n")
   data <- read.csv2(paste0("./Podatki/", x, ".csv"), fileEncoding = "UTF-8", row.names = "X")
   C <- trunc(sum(data$w)*0.75)
@@ -474,13 +481,14 @@ write.csv2(x = listi, file = "./Podatki/Results.csv", fileEncoding = "UTF-8")
 
 ```{r}
 sage <- read.csv2(file = "./Rezultati/sa.csv", fileEncoding = "UTF-8", row.names = "X")
+listi <- read.csv2("./Rezultati/Results.csv", fileEncoding = "UTF-8", row.names = "X")
 primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = Time.x - Time.y) %>% select("DP" = Time.x, "MIP" = Time.y, "Razlika" = res)
 kable(x = primerjava, caption = "Primerjava", format = "html") %>% 
   kable_styling("striped") %>%
   add_header_above(c("Čas merjen v sekundah" = 3))
 ```
 
-Opazila sva, da se je v najnem primeru zgodilo, da je bilo računanje z `MIP` metodo hitrejše kakor z metodo `DP`, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:
+Opazila sva, da se je v najinem primeru zgodilo, da je bilo računanje z `MIP` metodo hitrejše kakor z metodo `DP`, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu Sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:
 ```{r eval=FALSE}
 k <- 0
 tim <- system.time(for(i in c(1:10000000)){
@@ -491,4 +499,4 @@ print(tim[3],
 
 ```
 
-
+Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je algoritem  tudi hitrejši.
