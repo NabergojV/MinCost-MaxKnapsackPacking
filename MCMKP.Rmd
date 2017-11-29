@@ -1,11 +1,12 @@
 ---
-title: "Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
+title: "Efektiven algoritem dinaminega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
 author: "Luka Vidic, Veronika Nabergoj"
 date: "november 2017"
+encoding: "UTF-8"
 output:
+  pdf_document: default
   html_document: default
   word_document: default
-  pdf_document: default
 ---
 
 ## Uvod
@@ -20,7 +21,7 @@ S tem delom bova poskusila predstaviti poglobljeno študijo točnih metod rešev
 
 ### Klasični problem nahrbtnika
 
-Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto $C>0$ in naborom predmetov $I={1,…,n}$, z vrednostjo $p_i≥0$ in težo $w_i≥0$. Iščemo maksimalen profit, pri katerem teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešanega celoštevilskega linearnega programiranja: 
+Najbolj znan problem v kombinatorični optimizaciji je problem nahrbtnika (PN), ki je definiran takole: Nahrbtnik s kapaciteto $C>0$ in naborom predmetov $I={1,…,n}$, z vrednostjo $p_i \ge 0$ in težo $w_i \ge 0$. Iščemo maksimalen profit, pri katerem teža nahrbtnika ne presega kapacitete nahrbtnika. Ta problem rešimo s programi mešanega celoštevilskega linearnega programiranja: 
 
 $$\max{\bigg\{\sum_{i \in I}p_i x_i : \sum_{i \in I} w_i x_i \le C, x_i \in \{0,1\}, i \in I \bigg\}}, \hspace{2cm} (1)$$
 
@@ -221,7 +222,7 @@ Ta algoritem sva zapisala v Sage-u [MCMKP_MIP](https://cocalc.com/projects/71d53
 #### Opomba
 V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
 
-```{sage }
+```{r eval=FALSE}
 def MCMKP_MIP(C,P,W):
     from time import time
     s = time()
@@ -270,7 +271,7 @@ $$ \sum_{j\in I,j\neq i} W(j)x_j+(Csez(i)+1)x_i \geq Csez(i)+1 \text{ za } \fora
 To pa smo definirali že v Trditvi 1 in Lastnosti 2. Te nam zagotovijo, da če dodamo dodaten predmet $i$, za $i\leq i_c$, bo kapaciteta presežena.
 
 Podatki, ki sva jih vnesla v funkcijo algoritma so bili uvoženi iz $R-studia$ in zapisani v $csv$ obliki. Prebrani so bili s sledečo kodo:
-```{sage}
+```{r eval=FALSE}
 import csv
 import sys
 
