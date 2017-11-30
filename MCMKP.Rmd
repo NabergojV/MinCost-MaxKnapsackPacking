@@ -425,9 +425,13 @@ for(x in Podatki_1){
   time <- system.time(res <- DinamicniAlgo(I = data, C, FALSE))
   listi <- bind_rows(listi,data.frame(name = c(x), Time=time[3], c(res), stringsAsFactors = FALSE))
 }
-write.csv2(x = listi, file = "./Podatki/Results.csv", fileEncoding = "UTF-8")
+write.csv2(x = listi, file = "./Results/Results.csv", fileEncoding = "UTF-8")
 
 ```
+
+***
+
+\newpage
 
 #### Rezultati eksperimenta:
 
@@ -451,16 +455,63 @@ tabela2 <- data.frame("time_r"=tim[3],time_sage=sage_time)
 print(tabela2)
 ```
 
-Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični algoritem počasnejši od `MIP`.
+Izkazalo se je, da je pri zgornjem poskusu `R` hitrejši kot Sage. To načeloma nakazuje na to, da je najin dinamični algoritem precej počasnejši, kakor linearni program. Vendar to načeloma ni res, saj je zadaj še cel kup dejavnikov, ki so lahko vplivali na čas izračuna zgornjega testa (npr. procesijska moč računalnika, drug programski jezik, ipd.). Tako da samo iz tega ne moremo določiti hitrosti algoritmov. 
 
-```{r}
-primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = OPT.x - OPT.y) %>% select("DP" = OPT.x, "MIP" = OPT.y, "Razlika OPT" = res, "C DP" = C.x, "C MIP" = C.y)
+\newpage
+
+Če se posvetimo še podatkom samim, lahko opazimo manjše razlike pri računanju optimalnih vrednosti:
+```{r warning=FALSE, echo=FALSE}
+primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = OPT.x - OPT.y) %>% select("Vrsta podatkov" = name, "DP" = OPT.x, "MIP" = OPT.y, "Razlika OPT" = res, "C DP" = C.x, "C MIP" = C.y)
 kable(x = primerjava, caption = "Primerjava OPT in C", format = "latex") %>% 
   kable_styling(latex_options = "HOLD_position") %>%
-  add_header_above(c("Razlika v OPT" = 3, "Zapolnjena kapaciteta" = 2))
+  add_header_above(c(" " = 1, "Razlika v OPT" = 3, "Zapolnjena kapaciteta" = 2))
 ```
 
-Kot vidimo, se kapaciteta nahrbtnika razlikuje pri 3 eksperimentih. Vzrok temu je zaokroževanje, saj sva v `MCMKP_MIP()` uporabila funkcijo `round()` v `DinamcniAlgo()` pa funkcijo `trunc()`. Posledično se razlika pojavi tudi v `OPT`.
+Kot vidimo, se kapaciteta nahrbtnika razlikuje pri več eksperimentih. Vzrok temu je način zaokroževanja, saj sva v `MCMKP_MIP()` uporabila funkcijo `round()` v `DinamcniAlgo()` pa funkcijo `trunc()`. Posledično se razlika pojavi tudi v `OPT`.
 
 ## Zaključek
+
 Za nadaljevanje bi bilo smiselno končati še algoritma v skripti `Solve.r`, saj bi tako dobili še seznam predmetov v nahrbtniku pri optimalni rešitvi. Zanimivo bi bilo videti še, kako se algoritma obnašata na večji količini podatkov. Poskusila sva z večjim številom predmetov (N=5000), kar pa je zahtevalo 20.000 sekund, v Sage-u pa še celo več. Problem se nama je zdel zelo zanimiv, saj se lahko aplicira na življenjske primere.
+
+## Viri
+
+  naslov: "An effective dynamic programming algorithm for the minimum-cost maximal kanpsack packing problem",
+  avtorji:
+  - priimek: Furini
+    ime: Fabio,
+  - priimek: Ljubić
+    ime: Ivana,
+  - priimek: Sinnl
+    ime: Markus,
+  URL: 'https://doi.org/10.1016/j.ejor.2017.03.061',
+  založba: "European Journal of Operational Research",
+  strani: 438-448,
+  tip: članek,
+  izdano:
+    leto: 2017
+    mesec: 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
