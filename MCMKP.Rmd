@@ -31,9 +31,11 @@ kjer vsaka spremenljivka $x_i$ zavzame vrednost 1, če je i-ti predmet v nahrbtn
 #### Definicija 1: *Minimalni stroški, maksimalno število predmetov v nahrbtniku - MCMKP*
 
 Z začetnimi podatki $(I,p,w,C)$, je cilj najti maksimalno napolnitev nahrbtnika $S^* \subset I$, ki minimizira vrednosti izbranih stvari. 
-$$ S^* = \arg \max_{S \subset I} \bigg\{ \sum_{i \in S} p_i \bigg| \sum_{i \in S}w_i \ge C \text{ and } \sum_{i \in S \backslash {j}}w_i < C, \forall j \in S \bigg\} $$ 
+$$ S^* = \arg \min_{S \subset I} \bigg\{ \sum_{i \in S} p_i \bigg| \sum_{i \in S}w_i \le C \text{ and } \sum_{i \in S} w_i + w_j > C, \forall j \notin S \bigg\} $$ 
 
-Pri problemu MCMKP privzamemo, da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^* $ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter s tem dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
+\newpage
+
+Pri problemu MCMKP privzamemo, da je problem $(I,p,w,C)$ netrivialen in je pripadajoča optimalna rešitev $S^{*}$ lastna podmnožica množice $I$. Obratno kot pri klasičnem problemu nahrbtnika, pri MCMKP iščemo lastno podmnožico predmetov, ki jih damo v nahrbtnik, pri čemer minimiziramo njihovo vrednost. Reševanje klasičnega PN, pri katerem maksimiziramo vrednost je pri MCMKP nadomeščena z minimiziranjem vrednosti ter s tem dobimo ničelno zapolnjenost. Zato mora biti pogoj maksimalne zapolnitve nahrbtnika izražen eksplicitno, ko iščemo optimalno rešitev. MCMKP lahko apliciramo na problem razporejanje nalog na enem stroju z istim časom dospetja in istim rokom. Ta je torej sestavljen iz izbiranja podmnožice nalog, katere moramo razvrstiti (pred iztekom roka) pri čemer vrstni red postane nepomemben. $I$ je množica vseh nalog, trajanje nalog je podano z $w_i$, strošek izvajanje naloge je $p_i$. Skupen rok je $C$, ki ustreza kapaciteti nahrbtnika v MCMKP. Cilj je minimiziranje stroška pri izvajanju izbranih nalog in hkrati maksimizirati podmnožico izbranih nalog. Tako se problem iskanja najboljšega razporeda prevede na problem nahrbtnika (MCMKP). Podobno, pri primeru MCMKP, je cilj maksimizirati »dobiček« razvrščenih nalog pri čemer želimo minimalizirati podmnožico nalog, ki presegajo rok (to je, ohraniti najmanjše pokritje).
 
 ***
 
@@ -90,12 +92,12 @@ Spodnja trditev dobro opiše primer zakaj se poslužujemo zgornje meje
 
 #### Dokaz:
 
-Označimo z MSMKP relaksiran problem brez omejitve kapacitete nahrbtnika. Naj velja $w_i = p_i$, za $\forall i \in I$ in naj bo $S$ optimalna rešitev (minimalne moči) relaksiranega problema, tako da, $w(S) > C$. Naj bo $k$ indeks najlažjega predmeta iz $S$, to je, $k = \arg \min_{i\in S}w_i$. Sedaj sestavimo novo rešitev $S^{'}$ kot $S^{'}=S\backslash\{k\}$. Tako imamo $w(S^{'}) + w_i \le C$ za nek predmet $i \in I \backslash S^{'}$, kajti v nasprotnem primeru bi bila $S^{'}$ maksimalna zapolnitev nahrbtnika z višjo končno vrednostjo kot $S$, kar pa je protislovje.
+Označimo z MCMKP relaksiran problem brez omejitve kapacitete nahrbtnika. Naj velja $w_i = p_i$, za $\forall i \in I$ in naj bo $S$ optimalna rešitev (minimalne moči) relaksiranega problema, tako da, $w(S) > C$. Naj bo $k$ indeks najlažjega predmeta iz $S$, to je, $k = \arg \min_{i\in S}w_i$. Sedaj sestavimo novo rešitev $S^{'}$ kot $S^{'}=S\backslash\{k\}$. Tako imamo $w(S^{'}) + w_i \le C$ za nek predmet $i \in I \backslash S^{'}$, kajti v nasprotnem primeru bi bila $S^{'}$ maksimalna zapolnitev nahrbtnika z višjo končno vrednostjo kot $S$, kar pa je protislovje.
 
 Naj bo sedaj $\delta = C -w(S^{'})$, kar je v bistvu preostanek celotne kapacitete nahrbtnika potem, ko odstranimo $k$ iz $S$. Sedaj bomo poskušali to luknjo zapolniti z reševanjem naslednjega podproblema:
 
 $$\max \sum_{i \in I \backslash S^{'}} w_i x_i \hspace{0.5cm} \text{ tako da } \hspace{0.5cm} \sum_{i \in I \backslash S^{'}}w_i x_i \le \delta,\hspace{0.5cm} x_i \in \{0,1\}$$
-Označimo s $S^{''} $ optimalno rešitev tega problema. Očitno velja $S^{''} \ne \emptyset$. Nova rešitev $\tilde{S} = S^{'} \cup S^{''}$ tako zadostuje naslednji lastnosti: $w( \tilde{S} ) \le C$ in (po definiciji) $w(\tilde{S}) + w_i > C$ za $\forall i \notin \tilde{S}$, to je, $\tilde{S}$ je še ena dosegljiva rešitev relaksiranega problema z višjo močjo kot $S$, kar pa je protislovje.
+Označimo s $S^{''}$ optimalno rešitev tega problema. Očitno velja $S^{''} \ne \emptyset$. Nova rešitev $\tilde{S} = S^{'} \cup S^{''}$ tako zadostuje naslednji lastnosti: $w( \tilde{S} ) \le C$ in (po definiciji) $w(\tilde{S}) + w_i > C$ za $\forall i \notin \tilde{S}$, to je, $\tilde{S}$ je še ena dosegljiva rešitev relaksiranega problema z višjo močjo kot $S$, kar pa je protislovje.
 
 ***
 
@@ -122,9 +124,13 @@ Vrednost optimalne rešitve MCMKP je pridobljena s poskušanjem vklučitve vseh 
 
 ### Opis programiranja
 
-Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora. Spodaj je definiran algoritem `DinamicniAlgo(I, C)`.
+Na tem mestu predstaviva dinamični algoritem, ki teče v $O(nC)$ časovni zahtevnosti ter zavzame le $O(n+C)$ prostora. Spodaj je definiran algoritem `DinamicniAlgo(I, C, tabe)`.
 
-Kot vhodne podatke bo ta algoritem sprejel `I <- data.frame(w = c(...), p = c(...))` teže in cene/profitov predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. Vektor $M$ velikosti $C+1$ bo hranil sprotne rešitve problema $KP(i, 0, C)$. Za posodabljanje vrednosti vektorja $M$, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno $k$ ($k \in \{0,1, \dots , C \}$), tako da je vsota cen/dobičkov minimizirana. V vsakem koraku $i$ ($i = n, \dots , 1$), vrednost $M[k+1]$ hrani minimalen dobiček podmnožice predmetov, katerih skupna teža je natančno $k$, pri čemer upošteva le predmete iz množice $\{i+1, \dots , n \}$. Ko enkrat dosežemo korak $i$, tako da velja $i \le i_c$ (to je, vsi predmeti, manjši od $i$ so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli $(2)$.
+Kot vhodne podatke bo ta algoritem sprejel `I <- data.frame(w = c(...), p = c(...))`, podatke teže in cene/dobičkov predmetov urejenih po naraščajoči teži, torej $w_1 \leq w_2 \leq w_3 \leq \dots \leq w_n$. Vektor $M$ velikosti $C+1$ bo hranil sprotne rešitve problema $KP(i, 0, C)$. Za posodabljanje vrednosti vektorja $M$, algoritem sledi postopku reševanja problema nahrbtnika, kjer iščemo podmnožico predmetov, katerih skupna teža je natančno $k$ ($k \in \{0,1, \dots , C \}$), tako da je vsota cen/dobičkov minimizirana. V vsakem koraku $i$ ($i = n, \dots , 1$), vrednost $M[k+1]$ hrani minimalen dobiček podmnožice predmetov, katerih skupna teža je natančno $k$, pri čemer upošteva le predmete iz množice $\{i+1, \dots , n \}$. Ko enkrat dosežemo korak $i$, tako da velja $i \le i_c$ (to je, vsi predmeti, manjši od $i$ so lahko v nahrbtniku), bo algoritem posodobil najboljšo vrednost rešitve po formuli $(2)$.
+
+\newpage
+
+#### Algoritem
 
 ```{r DP, message=FALSE, warning=FALSE}
 source("./lib/libraries.r", encoding = "UTF-8")
@@ -154,11 +160,13 @@ DinamicniAlgo <- function(I,C,tabe){
     if(i <= i_c){
       zgornja <- max(0, (C - w_i[(i)]))
       spodnja <- max(0, (C - w_i[(i)]- I$w[i] + 1))
-      tmp <- min(M[(zgornja + 1):(1 + spodnja)] + p_i[(i)])   #dodam + 1, ker se M začne pri 1 namesto pri 0
+      tmp <- min(M[(zgornja + 1):(1 + spodnja)] + p_i[(i)])   # dodam + 1, ker se M začne
+                                                              # pri 1 namesto pri 0
       if(tmp < OPT){
         OPT <- tmp
         i_st <- i
-        C_st <- which.min((M[(1+spodnja):(1+zgornja)] + p_i[(i_st)])) + spodnja - 1 + w_i[(i_st)]
+        C_st <- which.min((M[(1+spodnja):(1+zgornja)] +
+                             p_i[(i_st)])) + spodnja - 1 + w_i[(i_st)]
       }
     }
     if(C>=I$w[i]){
@@ -167,11 +175,15 @@ DinamicniAlgo <- function(I,C,tabe){
       }
     }
     if(tabe){
-     tabela <- bind_rows(tabela, data.frame(i = i, p_i = I$p[i], w_i = I$w[i], t(M), C_l = spodnja, C_u = zgornja, P_i = sum(I$p[0:(i-1)]), W_i = sum(I$w[0:(i-1)]), OPT = OPT)) 
+     tabela <- bind_rows(tabela, data.frame(i = i, p_i = I$p[i], w_i = I$w[i],
+                                            t(M), C_l = spodnja, C_u = zgornja,
+                                            P_i = sum(I$p[0:(i-1)]),
+                                            W_i = sum(I$w[0:(i-1)]), OPT = OPT)) 
     }
   }
   if(tabe){
-    names(tabela) <- c("i", "p_i", "w_i", t(paste0("C = ", seq(0:(length(M)-1))-1)), "C_l", "C_u", "P_i", "W_i", "OPT")
+    names(tabela) <- c("i", "p_i", "w_i", t(paste0("C = ", seq(0:(length(M)-1))-1)),
+                       "C_l", "C_u", "P_i", "W_i", "OPT")
   result <- list(OPT = OPT, C = C_st, i = i_st, tabela = tabela)
   }
   else{
@@ -181,18 +193,20 @@ DinamicniAlgo <- function(I,C,tabe){
 }
 ```
 
+***
+
 Med izvajanjem algoritma lahko konstruiramo tabelo velikosti $O(nC)$, kjer vrednosti $M_{i}[k+1]$ predstavljajo najboljšo LU-KP vrednost rešitve, kjer upoštevamo le predmete iz $\{ i+1, \dots , n \}$ ter skupno kapaciteto $k$, $k \in \{0, \dots , C \}$. V spodnji tabeli so ponazorjeni rezultati manjšega problema. 
 
-```{r}
+```{r echo=FALSE}
 test_1 <- DinamicniAlgo(data.frame(w = c(1,1,2,3,4), p = c(3,4,6,2,1)),5,TRUE)
-kable(test_1$tabela, caption = "Tabela 1", format = "html") %>%
-  kable_styling("striped") %>%
+kable(test_1$tabela, caption = "Tabela 1", format = "latex") %>%
+  kable_styling(latex_options = "HOLD_position") %>%
   add_header_above(c("Predmet" = 3, "Kapaciteta" = ncol(test_1$tabela)-8, " " = 5))
 ```
 
 #### Trditev 5:
 
-Optimalno vrednost rešitve MCMKP lahko z `DinamicniAlgo` izračunamo v $O(nC)$ času.
+Optimalno vrednost rešitve MCMKP lahko z `DinamicniAlgo()` izračunamo v $O(nC)$ času.
 
 #### Dokaz:
 
@@ -207,25 +221,32 @@ kjer so začetne vrednosti $M_{n+1}[k]:= \infty$ za vse $k = 1, \dots , C$ in $M
 
 Izkoriščenje podobnosti med vrednostim rešitev MCMKP in LU-KP (*Trditev 5*), v vsakem koraku $i$ (začnemo s takim $i$, da velja $i \le i_c$), lahko pridobimo optimalno vrednost rešitve MCMKP, pri čemer v rešitvi upoštevamo vse še ne koriščene predmete (tiste iz množice $\{ 1, \dots , i-1 \}$). Vrednost te rešitve se hrani v spremenljivki $tmp$, usklajeno pa se posodablja tudi globalno optimalna rešitev. Opazimo, da predmeti $\{ 1, \dots , i-1 \}$ določajo preostalo kapaciteto nahrbtnika (katera je dana s $\bar{C}$), ki jo je potrebno zapolniti s predmeti iz $\{ i+1, \dots , n \}$, kjer je $\underline{C}$ določen na tak način, da bo zapolnitev maksimalna in da bo $i$-ti predmet najlažji izpuščen predmet. S tem zaključimo dokaz.
 
-Če dobro pogledamo, opazimo, da nam algoritem `DinamicniAlgo(I,C)` vrne le optimalno vrednost $OPT$. V kolikor pa bi želeli imeti optimalno rešitev $S^* $, pa imamo na voljo dva načina. V škodo prostorske zahtevnosti (iz $O(n+C)$ na $O(nC)$), lahko optimalno rešitev skonstruiramo v času $O(n)$. Za konstrukcijo rešitve je dovolj hraniti informacijo o tem, ali je bil predmet $i$ dodan v rešitev LU-KP v trenutnem koraku ali ne, za vsako težo $k \in \{ 0, \dots , C \}$ in korak $i = n, \dots , 1$. Hranimo sled kazalnikov $A_{i}[k+1] \in \{0,1\}$ definiranimi kot:
+\newpage
+
+Če dobro pogledamo, opazimo, da nam algoritem `DinamicniAlgo(I,C, tabe)` vrne le optimalno vrednost $OPT$. V kolikor pa bi želeli imeti optimalno rešitev $S^{*}$, pa imamo na voljo dva načina. V škodo prostorske zahtevnosti (iz $O(n+C)$ na $O(nC)$), lahko optimalno rešitev skonstruiramo v času $O(n)$. Za konstrukcijo rešitve je dovolj hraniti informacijo o tem, ali je bil predmet $i$ dodan v rešitev LU-KP v trenutnem koraku ali ne, za vsako težo $k \in \{ 0, \dots , C \}$ in korak $i = n, \dots , 1$. Hranimo sled kazalnikov $A_{i}[k+1] \in \{0,1\}$ definiranimi kot:
 $$A_{i}[k+1] := \begin{cases}
 1, & \text{če } M_{i}[k+1] = M_{i+1}[k+1-w_i]+p_i \\
 0, & \text{sicer (tj., če} M_{i}[k+1]=M_{i+1}[k+1])
 \end{cases} \\
 \forall i = n, \dots , 1, \hspace{1cm} k=0, \dots ,C$$
-Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^* $, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^* $ zahtevano s strani optimalne rešitve. Najprej določimo $S^* = \{ 1, \dots , i^* -1\}$, nato, začnemo pri $A_{i^* }[C^* -W_{i^* }]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
+Potem ko pridobimo optimalno vrednost rešitve $OPT$, lahko zračunamo tudi optimalno rešitev $S^{*}$, tako da uporabimo rahlo modificiran proces vzvratnega reševanja normalnega KP (*backtracking procedure*). Spomnimo se, da nam algoritem `DinamicniAlgo(I,C)` vrne kapaciteto $C^{*}$ zahtevano s strani optimalne rešitve. Najprej določimo $S^* = \{ 1, \dots , i^* -1\}$, nato, začnemo pri $A_{i^* }[C^* -W_{i^* }]$, nato nadaljujemo s procesom vzvratnega reševanja za KP. 
 
 ## Dinamičen MIP algoritem za reševanje MCMKP
 
-Ta algoritem sva zapisala v Sage-u [MCMKP_MIP](https://cocalc.com/projects/71d53eb6-050f-4a7c-8002-d2b9d7e70b76/files/algoritem.sagews?session=default), ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. V funkciji $MCMKP_MIP$ je definiran algoritem, ki nam za vhodne podatke vzame $C$-kapaciteto, $P$-vrednosti predmetov in $W$-težo predmetov, vrne pa optimalno vrednost nahrbtnika, $OPT$, seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik, ter čas izvajanja algoritma za podane vhodne podatke. Čas izvajanja izmerimo s pomočjo vgrajene funkcije $time$. Čas odčitamo na začetku izvajanja algoritma s $s$ ter po izvedenem algoritmu ponovno preberemo čas $t$, nato pa odštejemo in dobimo čas trajanja.
+Ta algoritem sva zapisala v Sage-u `MCMKP_MIP()`, ker je boljša izbira kot R studio. Podatke bova uvozila iz R v csv obliki ter z uporabo funkcije branja csv datotek uvozila podatke v Sage. V funkciji `MCMKP_MIP()` je definiran algoritem, ki nam za vhodne podatke vzame $C$-kapaciteto, $P$-vrednosti predmetov in $W$-težo predmetov, vrne pa optimalno vrednost nahrbtnika, $OPT$, seznam $vzamemo$ na katerem so ničle in enke, ki povedo katere predmete smo vzeli v nahrbtnik, ter čas izvajanja algoritma za podane vhodne podatke. Čas izvajanja izmerimo s pomočjo vgrajene funkcije $time$. Čas odčitamo na začetku izvajanja algoritma s $s$ ter po izvedenem algoritmu ponovno preberemo čas $t$, nato pa odštejemo in dobimo čas trajanja.
+
+Povezava do algoritma v CoCalc-u: https://cocalc.com/projects/71d53eb6-050f-4a7c-8002-d2b9d7e70b76/files/algoritem.sagews?session=default
+
+\newpage
 
 #### Opomba
+
 V tem algoritmu je $C_i$, ki je bil definiran že prej, definiran kot $Csez$. Enako je $i_c$ v tem algoritmu definiran kot $kriticen$ ter $x_i$ je definiran kot $vzamemo$.
 
 ```{r eval=FALSE}
 def MCMKP_MIP(C,P,W):
     from time import time
-    s = time()
+    s = time()              # time nam meri čas, ki ga algoritem porabi za delovanje
     program = MixedIntegerLinearProgram(maximization=False,solver="GLPK")
     vzamemo = program.new_variable(binary=True)
     I=range(len(W))
@@ -233,7 +254,7 @@ def MCMKP_MIP(C,P,W):
 
     Csez = [C-x for x in W]
 
-    #Določimo indeks kritičnega predmeta
+    # Določimo indeks kritičnega predmeta
     indeks= 0
     vsota= 0
     while(indeks< len(W) and vsota <=C):
@@ -242,27 +263,36 @@ def MCMKP_MIP(C,P,W):
 
     kriticen=indeks - 1
 
-    #Dodamo omejitve algoritma
+    # Dodamo omejitve algoritma
     program.add_constraint(sum(W[i] * vzamemo[i] for i in I) <= C)
     for i in range(kriticen + 1):
-        program.add_constraint(sum(min(W[j],Csez[i]+1)*vzamemo[j] for j in I if i!=j) + min(W[kriticen],Csez[i]+1)*vzamemo[i] >= Csez[i]+1)
+        program.add_constraint(sum(min(W[j],Csez[i]+1)*vzamemo[j] for j in I if i!=j) +
+                                 min(W[kriticen],Csez[i]+1)*vzamemo[i] >= Csez[i]+1)
 
-    #solve nam vrne optimalno rešitev OPT, get_values nam vrne seznam 1 n 0, ki povedo katere predmete smo vzeli
-    program.solve()          #time nam meri čas, ki ga algoritem porabi za delovanje
-    #program.show()                 #zapiše celoten program na bolj pregleden način
+    # solve nam vrne optimalno rešitev OPT, get_values nam vrne seznam 1 n 0,
+    # ki povedo katere predmete smo vzeli
+    
+    program.solve()
+    # program.show()                 #zapiše celoten program na bolj pregleden način
 
     resitev = program.get_values(vzamemo)
     koncniC = sum(resitev[i] * w for i, w in enumerate(W))
     t = time()
     trajanje = t-s # trajanje v sekundah
-    #če bi želeli dodati še seznam predmetov, ki smo jih vzeli damo v return še program.get_values(vzamemo)
+    # če bi želeli dodati še seznam predmetov, ki smo jih vzeli damo v return še
+    # program.get_values(vzamemo)
     return (program.solve(),trajanje,koncniC)
 ```
 
-#### Prva omejitev 
+\newpage
+
+#### Prva omejitev
+
 $$\sum_{i\in I}W(i) * vzamemo(i) \leq C$$
 Ta omejitev nam pove, da teža vseh izbranih predmetov ne sme presegati kapacitete $C$.
-#### Druga omejitev 
+
+#### Druga omejitev
+
 $$\sum_{j\in I,j\neq i} \min\{ W(j),Csez(i)+1\}x_j+\min\{W(c),Csez(i)+1\}x_i \geq C sez(i)+1 \text{ za } \forall i\in I: i\leq i_c$$
 
 Te neenakosti dobimo iz:
@@ -289,6 +319,8 @@ seznamresitev
 
 ***
 
+\newpage
+
 ## Eksperimenti
 
 Najin algoritem bova preizkusila na različnih podatkih, ter primerjala rezultate. Prva skupina podatkov je sestavljena tako, da so teže $w_i$ in cene/profit $p_i$ med sabo korelirani, v drugi skupini pa nekorelirani. Izbrala sva vzorce velikosti $\bar{N} \in \{ 10, 50, 100 \}$. Teže predmetov bova izbrala naključno porazdeljene enakomerno na $w_i \in [1,R]$, kjer bova vzela $R \in \{10, 100, 1000 \}$. Velikosti nahrbtnika pa definirava kot delež skupne teže predmetov, torej: $C \in \{ \lfloor 25 \%  W \rfloor , \lfloor 50 \%  W \rfloor, \lfloor 75 \%  W \rfloor \}$. Podatki so bili generirani v R-u s sledečo kodo:
@@ -306,7 +338,6 @@ korelirani <- function(R = integer(), size = integer()){
   I <- I[order(I$w, decreasing = FALSE),]
   return(I)
 }
-
 nekorelirani <- function(R = integer(), size = integer()){
   w_1 <- sample(x = 1:R, size = size, replace = TRUE)
   p_1 <- sample(x = 1:R, size = size, replace = TRUE)
@@ -314,16 +345,17 @@ nekorelirani <- function(R = integer(), size = integer()){
   I <- I[order(I$w, decreasing = FALSE),]
   return(I)
 }
-
 # Podatke shranim v ./Podatki/...
 R <- c(10, 100, 1000)
 N <- c(10, 50, 100)
 for(r in R){
   for(n in N){
     kor <- korelirani(r, n)
-    write.csv2(x = kor, file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+    write.csv2(x = kor, file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"),
+               fileEncoding = "UTF-8")
     nekor <- nekorelirani(r, n)
-    write.csv2(x = nekor, file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+    write.csv2(x = nekor, file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"),
+               fileEncoding = "UTF-8")
   }
 }
 # vzela bova še večjo količino podatkov
@@ -332,15 +364,19 @@ N <- c(1000, 5000)
 for(r in R){
   for(n in N){
     kor <- korelirani(r, n)
-    write.csv2(x = kor, file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+    write.csv2(x = kor, file = paste0("./Podatki/Korelirani_R", r, "_N", n, ".csv"),
+               fileEncoding = "UTF-8")
     nekor <- nekorelirani(r, n)
-    write.csv2(x = nekor, file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"), fileEncoding = "UTF-8")
+    write.csv2(x = nekor, file = paste0("./Podatki/Nekorelirani_R", r, "_N", n, ".csv"),
+               fileEncoding = "UTF-8")
   }
 }
 ```
 
+\newpage
+
 Preverimo ali so generirani podatki res korelirani oziroma nekorelirani:
-```{r}
+```{r echo=FALSE}
 R <- c(10, 100, 1000)
 N <- c(10, 50, 100)
 Kovariance <- data.frame()
@@ -364,13 +400,14 @@ for(r in R){
 }
 Kovariance <- bind_cols(korelirane, nekorelirane)
 row.names(Kovariance) <- R
-kable(Kovariance, format = "html") %>% 
-  kable_styling("striped") %>%
+kable(Kovariance, format = "latex") %>% 
+  kable_styling(latex_options = "HOLD_position") %>%
   add_header_above(c("R"=1,"Korelirani" = 3, "Nekorelirani" = 3))
 ```
 
 Zanima naju, kateri od algoritmov je hitrejši, zato tukaj nastavimo parameter `tabe` v funkciji `DinamicniAlgo(I,C,tabe)` na `FALSE`, tako da se tokrat ne oblikuje tabela, da na ta način prihranimo nekaj prostora. Merjen bo tudi čas, potreben za izračun optimalne vrednosti pri maksimalni zapolnitvi.
 
+Eksperiment sva izvedla s sledečo kodo:
 ```{r eval=FALSE}
 Podatki <- list.files(path = "./Podatki/")[c(-1)]
 Podatki_1 <- gsub(".csv", "", Podatki)
@@ -392,14 +429,15 @@ write.csv2(x = listi, file = "./Podatki/Results.csv", fileEncoding = "UTF-8")
 
 ```
 
+#### Rezultati eksperimenta:
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 sage <- read.csv2(file = "./Rezultati/sa.csv", fileEncoding = "UTF-8", row.names = "X")
 listi <- read.csv2("./Rezultati/Results.csv", fileEncoding = "UTF-8", row.names = "X")
-primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = Time.x - Time.y) %>% select("DP" = Time.x, "MIP" = Time.y, "Razlika" = res)
-kable(x = primerjava, caption = "Primerjava", format = "html") %>% 
-  kable_styling("striped") %>%
-  add_header_above(c("Čas merjen v sekundah" = 3))
+primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = Time.x - Time.y) %>% select("Vrsta podatkov" = name, "DP" = Time.x, "MIP" = Time.y, "Razlika" = res)
+kable(x = primerjava, caption = "Primerjava", format = "latex") %>% 
+  kable_styling(latex_options = "HOLD_position") %>%
+  add_header_above(c(" " = 1, "Čas merjen v sekundah" = 3))
 ```
 
 Opazila sva, da se je v najinem primeru zgodilo, da je bilo računanje z `MIP` metodo hitrejše kakor z metodo `DP`, kar nasprotuje trditvam članka. Poglaviten razlog za to, bi lahko bil, da se računanje v programu Sage izvaja na oblaku z večjo kapaciteto in boljšimi procesorji. V ta namen sva naredila preprost test. V vsakem programu sva zagnala zanko for na seznamu dolžine 10 milijonov ter merila čas:
@@ -417,8 +455,8 @@ Izkazalo se je, da je `R` hitrejši kot Sage, kar pa ne pomeni, da je dinamični
 
 ```{r}
 primerjava <- left_join(listi, sage, by = "name") %>% mutate(res = OPT.x - OPT.y) %>% select("DP" = OPT.x, "MIP" = OPT.y, "Razlika OPT" = res, "C DP" = C.x, "C MIP" = C.y)
-kable(x = primerjava, caption = "Primerjava OPT in C", format = "html") %>% 
-  kable_styling("striped") %>%
+kable(x = primerjava, caption = "Primerjava OPT in C", format = "latex") %>% 
+  kable_styling(latex_options = "HOLD_position") %>%
   add_header_above(c("Razlika v OPT" = 3, "Zapolnjena kapaciteta" = 2))
 ```
 
