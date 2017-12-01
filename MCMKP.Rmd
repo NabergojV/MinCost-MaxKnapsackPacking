@@ -1,5 +1,5 @@
 ---
-title: "Efektiven algoritem dinaminega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
+title: "Efektiven algoritem dinamičnega programiranja pri problemu nahrbtnika z minimalnimi stroški in maksimalno zapolnitvijo"
 author: "Luka Vidic, Veronika Nabergoj"
 date: "november 2017"
 encoding: "UTF-8"
